@@ -99,9 +99,9 @@ plot.VarImp <- function(x, nVar = length(x$values),
       if(is.null(margin)){margin <- c(3,6,3,1)}
       op <- par(mar = margin)
       yValues <- barplot(Y, names.arg = "",
-              xlim = c(min(intEnds, Y), max(intEnds, Y)*1.05),
+              xlim = c(min(intEnds, 0, Y), max(intEnds, Y)*1.05),
               main = title, col = col, horiz = horizontal, ...)
-      text(x = min(intEnds, Y), y = yValues,
+      text(x = min(intEnds, 0, Y), y = yValues,
            labels = names(Y), pos = 2, xpd=TRUE)
       abline(v = 0, col = "gray20", lty = 2)
       if(interval != "no"){
@@ -119,7 +119,7 @@ plot.VarImp <- function(x, nVar = length(x$values),
       if(is.null(margin)){margin <- c(5,3,3,1)}
       op <- par(mar = margin)
       xValues <- barplot(Y, names.arg = "",
-                         ylim = c(min(intEnds, Y), max(intEnds, Y)),
+                         ylim = c(min(intEnds, 0, Y), max(intEnds, Y)),
                          main = title, col = col, ...)
       axis(side = 1, at = xValues, labels = FALSE) 
       text(x = xValues, y = par()$usr[3] - (par()$usr[4] - par()$usr[3])/20,

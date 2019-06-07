@@ -8,31 +8,35 @@ vignette: >
   %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{The permimp-package}
   \usepackage[UTF-8]{inputenc}
-abstract: The `permimp`-package is developed to replace the conditional permutation importance computation by the `varimp`-function(s) of the `party`-package. `permimp` does everything that the `varimp`-function(s) do, but (for the conditional permutation) it is faster. In addition the package includes some plotting options.   
-keywords: "permimp, permutation importance, cforest"
+abstract: The `permimp`-package is developed to replace the Conditional Permutation Importance (CPI) computation by the `varimp`-function(s) of the `party`-package. `permimp` applies a different implementation for the CPI, in order to mitigate some issues related to the implementation of the CPI in the `party`-package. In addition, the CPI is also available for random forests grown by the `randomForest`-package. Finally, the package includes some plotting options.   
+keywords: "permimp, Conditional Permutation Importance, cforest, randomForest"
 date: "`r Sys.Date()`"
-bibliography: G:/Forschung/VariableImportance/RF_VariableImportance.bib
+bibliography: vignetteBib.bib
 biblio-styke: apa
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", 
+                      fig.width = 7, fig.height = 5)
 ```
 
+***
 
 # Introduction
-Although originally designed for prediction purposes, Random forests @Breiman2001 have become a popular tool to assess the importance of predictors. Several methods and measures have been proposed, one of the most popular ones is the *permuation importance* @Breiman2001. Inspired by the contrast between the *unconditional* zero-order correlation between predictor and outcome, and the *conditional* standardized regression coefficient in multiple linear regression, @Strobl2008 argued that in some cases the importance of a predictor, conditionally on (all) other predictors, may be of higher interest than the *unconditional* importance. Therefore, they proposed the *conditional permuation importance*, which introduces a conditional permutation scheme that is based on the dependence between the predictors.
 
-The `permimp`-package presents a different implementation of this *conditional permutation importance*. Like the original implementation (available in the `party` R-package of  @Hothorn2006), `permimp` focuses on random forests that were grown according to the unbiased recursive partitioning (cf. `cforests`; @Hothorn2006). Moreover, the `permimp`-package can be seen as a replacement for the `varimp`-functions of the `party` package in R. 
+Although originally designed for prediction purposes, Random forests @Breiman2001 have become a popular tool to assess the importance of predictors. Several methods and measures have been proposed, one of the most popular ones is the *Permuation Importance* @Breiman2001, originally refered to as the Mean Decrease in Accuracy. Inspired by the contrast between the *unconditional* zero-order correlation between predictor and outcome, and the *conditional* standardized regression coefficient in multiple linear regression, @Strobl2008 argued that in some cases the importance of a predictor, conditionally on (all) other predictors, may be of higher interest than the *unconditional* importance. Therefore, they proposed the *Conditional Permuation Importance*, which introduces a conditional permutation scheme that is based on the dependence between the predictors.
 
-This vignette has two main parts. The first part is tutorial-like and demonstrates functionality of the `permimp`-package (by also comparing it to original `party::varimp`-functions. The second part is more theoretical and explains the how and the why of the new *conditional permuation importance*-implementation.
+The `permimp`-package presents a different implementation of this *Conditional Permuation Importance*. Unlike the original implementation (available in the `party` R-package of  @Hothorn2006), `permimp` can, in addition to random forests that were grown according to the unbiased recursive partitioning (cf. `cforests`; @Hothorn2006), also deal with with random forests that were grown using the `randomForest`-package @Liaw2002, which applies the original tree growing algorithm based on impurity reduction @Breiman2001. (In principle, the `permimp` can be extended to random forests grown by other packages, unter the condition that tree-wise predictions are possible and OOB-information as well as the split points are available per tree.) We argue that the `permimp`-package can be seen as a replacement for the `varimp`-functions of the `party` package in R. 
 
+This vignette has two main parts. The first part is tutorial-like and demonstrates functionality of the `permimp`-package (by also comparing it to original `party::varimp`-functions. The second part is more theoretical and explains the how and the why of the new *Conditional Permuation Importance*-implementation.
+
+<br> 
 
 # Part I: `permimp`-tutorial
 
 ## A. The `permimp`-function
 
-The `permimp`-function replaces all the `party::varimp`-functions (`varimp`, `varimpAUC`, `varimpsurv`). To apply `permimp`-function, one needs a fitted random forest. More specifically, a S4 object of class `"RandomForest"` as obtained by the `party::cforest`-function. As an example we will use the (cleaned) `airquality`-data set to fit random forest with 50 trees:
+The `permimp`-function replaces all the `party::varimp`-functions (`varimp`, `varimpAUC`, `varimpsurv`). To apply `permimp`-function, one needs a fitted random forest. Within this tutorial we will mainly focus on random forests-objects as obtained by the `party::cforest`-function (i.e., S4-objects of class `"RandomForest"`). As an example we will use the (cleaned) `airquality`-data set to fit random forest with 50 trees:
 
 ```{r eval = TRUE, echo = TRUE} 
 library("party", quietly = TRUE)
@@ -50,10 +54,10 @@ cfAirq50 <- cforest(Ozone ~ ., data = airq,
 Let's start by comparing the `permimp` and the `varimp` function for the conditional permutation importance.
 
 ```{r eval = TRUE, echo = TRUE} 
-system.time(Cpermimp <- permimp(cfAirq50, conditional = TRUE, progressBar = FALSE))
-system.time(Cvarimp <- varimp(cfAirq50, conditional = TRUE))
-Cpermimp
-Cvarimp
+system.time(CPI_permimp <- permimp(cfAirq50, conditional = TRUE, progressBar = FALSE))
+system.time(CPI_varimp <- varimp(cfAirq50, conditional = TRUE))
+CPI_permimp
+CPI_varimp
 ```
 
 Three differences can easily be spotted:
@@ -67,37 +71,37 @@ Three differences can easily be spotted:
 
 Why are the results different?
 
-There are two main reasons. First, `permimp` uses a different default `threshold`-value:  `permimp` uses `threshold = .95` while `varimp` uses `threshold = 0.2`. Check `?permimp` and `?varimp`.
+There are two main reasons. First, `permimp` uses a different default `threshold`-value:  `permimp` uses `threshold = .95` while `varimp` uses `threshold = 0.2`. Check `?permimp` and `?varimp`. There is a good reason for using a higher default threshold value. 
 
 When using equal `threshold`-values...  
 
 ```{r eval = TRUE, echo = TRUE} 
-Cpermimp <- permimp(cfAirq50, conditional = TRUE, threshold = .2, progressBar = FALSE)
-Cpermimp
-Cvarimp
+CPI_permimp <- permimp(cfAirq50, conditional = TRUE, threshold = .2, progressBar = FALSE)
+CPI_permimp
+CPI_varimp
 ```
 
 The results are more similar, but not quite identical. The remaining differences are explained by the second reason: the implementation of `permimp` differs from the `varimp`-implementation. Using a higher `threshold`-value makes the differences between the two implementations more pronounced.
 
 ```{r eval = TRUE, echo = TRUE} 
-Cvarimp <- varimp(cfAirq50, conditional = TRUE, threshold = .95)
-Cpermimp
-Cvarimp
+CPI_varimp <- varimp(cfAirq50, conditional = TRUE, threshold = .95)
+CPI_permimp
+CPI_varimp
 ```
 
-The differences between the two implementations (and why we believe the new implementation is more attractive), is explained in the second part of this document. 
+The differences between the two implementations (and why we believe the new implementation is more attractive), is explained in the second part of this document, as well as in this manuscript: @Debeer2019. 
 
 ### A.3. Backward Compatibel with `party` when: `asParty = TRUE`
 
-By specifying `asParty = TRUE`, the `permimp`-function can be made backward compatible with the `party::varimp`-function.  But `permimp` is a bit faster. To get exactly the same results, the used random seeds should be equa. 
+By specifying `asParty = TRUE`, the `permimp`-function can be made backward compatible with the `party::varimp`-function.  But `permimp` is a bit faster. To get exactly the same results, the random seeds should be exactly the same. 
 
 ```{r eval = TRUE, echo = TRUE} 
 set.seed(542863)
-system.time(CasParty <- permimp(cfAirq50, conditional = TRUE, asParty = TRUE, progressBar = FALSE))
+system.time(CPI_asParty <- permimp(cfAirq50, conditional = TRUE, asParty = TRUE, progressBar = FALSE))
 set.seed(542863)
-system.time(Cvarimp <- varimp(cfAirq50, conditional = TRUE))
-CasParty
-Cvarimp
+system.time(CPI_varimp <- varimp(cfAirq50, conditional = TRUE))
+CPI_asParty
+CPI_varimp
 ```
 
 Note that with `asParty = TRUE` the default `threshold`-value is automatically set back to `0.2`.
@@ -113,13 +117,13 @@ A less obvious difference between `permimp` and `varimp` is the object that it r
 
 ```{r eval = TRUE, echo = TRUE} 
 ## varimp returns a named numerical vector.
-str(Cvarimp)
+str(CPI_varimp)
 
 ## permimp returns a VarImp-object.
-str(CasParty)
+str(CPI_asParty)
 
 ## the results of permimp(asParty = TRUE) and varimp() are exactly the same.
-all(CasParty$values == Cvarimp)
+all(CPI_asParty$values == CPI_varimp)
 ```
 
 An advantage of the `VarImp`-object, is that the `$perTree`-values kan be used to inspect the distribution of the importance values across the trees in a forest. For instance, the plotting function (demonstrated below) can be used to visualize this distribution of per tree importance values.
@@ -127,24 +131,24 @@ An advantage of the `VarImp`-object, is that the `$perTree`-values kan be used t
 
 ### A.5. Unconditional Permutation Importance: `permimp` = `varimp`
 
-Of course, there is also the option to compute the unconditional permutation importance. Both using the original and the splitwise permutation. Here, there are no differences between `permimp` and `varimp`. That is, `permimp` simply uses the `party` `varimp` code, making the `asParty` argument redundant in this case. Note, however, that `permimp` still returns a `VarImp-object`.
+Of course, there is also the option to compute the unconditional permutation importance. Both using the original and the splitwise permutation algorithm. Here, there are no differences between `permimp` and `varimp`. That is, `permimp` simply uses the `party` `varimp` code, making the `asParty` argument redundant in this case. Note, however, that `permimp` still returns a `VarImp-object`.
 
 ```{r eval = TRUE, echo = TRUE} 
 ## Original Unconditional Permutation Importance
 set.seed(542863)
-UasParty <- permimp(cfAirq50, progressBar = FALSE, pre1.0_0 = TRUE)
+PI_permimp <- permimp(cfAirq50, progressBar = FALSE, pre1.0_0 = TRUE)
 set.seed(542863)
-Uvarimp <- varimp(cfAirq50, pre1.0_0 = TRUE)
-UasParty
-Uvarimp
+PI_varimp <- varimp(cfAirq50, pre1.0_0 = TRUE)
+PI_permimp
+PI_varimp
 
 ## Splitwise Unconditional Permutation Importance
 set.seed(542863)
-UasParty <- permimp(cfAirq50, progressBar = FALSE)
+PI_permimp2 <- permimp(cfAirq50, progressBar = FALSE)
 set.seed(542863)
-Uvarimp <- varimp(cfAirq50)
-UasParty
-Uvarimp
+PI_varimp2 <- varimp(cfAirq50)
+PI_permimp2
+PI_varimp2
 ```
 
 For more detailed information check `?permimp`.
@@ -172,22 +176,22 @@ cfAirq500 <- cforest(Ozone ~ ., data = airq,
                                               minsplit = 10))
 
 ## compute permutation importance
-Upermimp <- permimp(cfAirq500, progressBar = FALSE)
+PI_permimp500 <- permimp(cfAirq500, progressBar = FALSE)
 
 ## different plots, all easy to make
 ## barplot
-plot(Upermimp, type = "bar")
+plot(PI_permimp500, type = "bar")
 
 ## barplot with visualization of the distribution: an
 ## interval between the .25 and .75 quantiles of the per 
 ## Tree values is added to the plot
-plot(Upermimp, type = "bar", interval = "quantile")
+plot(PI_permimp500, type = "bar", interval = "quantile")
 
 ## horizontal boxplot
-plot(Upermimp, type = "box", horizontal = TRUE)
+plot(PI_permimp500, type = "box", horizontal = TRUE)
 
 ## unsorted dotplot
-plot(Upermimp, type = "dot", sort = FALSE, 
+plot(PI_permimp500, type = "dot", sort = FALSE, 
      interval = "quantile")
 ```
 
@@ -219,6 +223,30 @@ Other related functions are:
 * `as.VarImp`: creates a `VarImp`-object from a `matrix`/`data.frame` of perTree values, or from a numerical vector of importance values.
 * `is.VarImp`: checks if an object is of the `VarImp`-class.
 
+
+## C. `permimp` applied to `randomForest`-objects
+
+As mentioned in the introduction, the `permimp`-package can also deal with with random forests that were grown using the `randomForest`-package @Liaw2002, which applies the original tree growing algorithm based on impurity reduction @Breiman2001.
+
+Let's first grow a (small) forest.
+
+```{r eval = TRUE, echo = TRUE} 
+library("randomForest", quietly = TRUE)
+set.seed(542863)
+rfAirq50 <- randomForest(Ozone ~ ., data = airq, mtry = 2, replace = FALSE, 
+                         nodesize = 7, keep.forest = TRUE, keep.inbag = TRUE)
+```
+
+Note that `keep.forest = TRUE` and `keep.inbag = TRUE`. The `permimp`-function requires information about which observations were in-bag (IB) or out-of-bag (OOB), as well as information about the splitpoints in each tree. Without this information, the (Conditional) Permutation Importance algorithm cannot be executed.
+
+```{r, eval = TRUE, echo = TRUE}
+CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE)
+plot(CPI_permimpRF, horizontal = TRUE)
+```
+
+
+
+***
 
 # Part II: New Conditional Permutation Implentation
 This part explains the new implementation of the conditional permutation importance, and discusses the differences with the original implementation in `party`, as described by @Strobl2008. First the the idea behind the conditional implementation is briefly recapitulated, followed by a discussion of the original implementation. Then the new implementation is explained, and the main differences with the original are emphasized. Finally, some practical implications of the new implementation are given, and the interpretation and possible use of the `threshold` value are discussed.
@@ -284,9 +312,9 @@ The `threshold`-value can be interpreted as a tuning parameter to make the permu
 
 Some research questions are best answered with an unconditional importance, while other questions are better answered using a conditional importance measure. In many situations, however, it is not clear which measure best fits the research question. Therefore, we argue that in these cases it can be interesting to evaluate the importance (rankings) of the predictors for different `threshold`-values, going from fully unconditional to more conditional. This strategy can provide more insight in how the conditioning affects the permutation importance values.
 
-In the original implementation, setting a sensible `threshold` proved to be hard, because the practial meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by Debeer and Strobl (2018) ADD CITATION suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations for lower `threshold`-values.
+In the original implementation, setting a sensible `threshold` proved to be hard, because the practial meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by @Debeer2019 suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations for lower `threshold`-values.
 
-As an additional feature, the `permimp` can provide some diagnostics about the conditional permuation. When  `thresholdDiagnostics = TRUE`, the `permimp`-function monitors whether or not a conditional permuation scheme was feasible for each predictor $X$ in each tree. This information is translated in messages that suggest to either  or decrease the `threshold`. 
+As an additional feature, the `permimp` can provide some diagnostics about the conditional permuation. When  `thresholdDiagnostics = TRUE`, the `permimp`-function monitors whether or not a conditional permuation scheme was feasible for each predictor $X$ in each tree. This information is translated in messages that suggest to either or decrease the `threshold`. 
 
 First, it is possible that the conditioning grid is so fine-grained that permuating $X$ conditionally cannot lead to observations ending up in a different end-node of the tree. In other words, the prediction accuracy before and after permuting will be always equal. If this issue occurs in more than 50 percent of the trees that include $X$ as a splitting variable, `permimp` will produce a note, and suggest to increase the `threshold`-value. A higher `threshold`-value may result in a less fine-grained partitioning, making the conditional permutation feasible again.
 

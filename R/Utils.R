@@ -4,7 +4,7 @@
 
 
 ## Quick Chisq.test.
-quickChisq.test <- function(table)
+quickChisqTest <- function(table)
 {
    n <- sum(table)
    sr <- rowSums(table)
@@ -15,7 +15,7 @@ quickChisq.test <- function(table)
 
 # ## Quick Chisq.test (with correction based on Haberman (1988), 
 # ## which comes from Zelterman (1987))
-# quickChisq.test <- function(table)
+# quickChisqTest <- function(table)
 # {
 #   n <- sum(table)
 #   sr <- rowSums(table)
@@ -85,32 +85,32 @@ selectError <- function(type, AUC = FALSE)
 
 
 ## Function to select the baseRate function; based on party.
-selectBaseRate <- function(type, AUC = FALSE)
-{
-  ## when AUC = TRUE
-  if (AUC && !type == "nominal2")
-    warning("AUC = TRUE works only for binary y\n classification; error rate is used instead of AUC")
-  if (AUC && type == "nominal2")
-    return(function(x, oob, y) {
-      xoob <- sapply(x, function(x) x[1])[oob]
-      yoob <- y[oob]
-      which1 <- which(yoob==levels(y)[1])
-      noob1 <- length(which1)
-      noob <- length(yoob)
-      if (noob1==0|noob1==noob) { return(NA) }       # AUC cannot be computed if all OOB-observations are from one class
-      return(1-sum(kronecker(xoob[which1] , xoob[-which1],">"))/(noob1*(length(yoob)-noob1)))       # calculate AUC
-    })
-  if (type == "survival") 
-    return(function(x, oob, y) ipred::sbrier(y[oob, , drop = FALSE], x[oob]))
-  else if (type %in% c("nominal2", "nominal"))
-    return(function(x, oob, y) mean((levels(y)[sapply(x, which.max)] != y)[oob]))
-  else if (type == "ordinal")
-    return(function(x, oob, y) mean((sapply(x, which.max) != y)[oob]))
-  else if (type == "regression")
-    return(function(forest, oob, y) mean((unlist(x) - y)[oob]^2))
-  else if (type == "classification")
-    return(function(x, oob, y) mean((levels(y)[x] != y)[oob]))
-}
+#selectBaseRate <- function(type, AUC = FALSE)
+#{
+#  ## when AUC = TRUE
+#  if (AUC && !type == "nominal2")
+#    warning("AUC = TRUE works only for binary y\n classification; error rate is used instead of AUC")
+#  if (AUC && type == "nominal2")
+#    return(function(x, oob, y) {
+#      xoob <- sapply(x, function(x) x[1])[oob]
+#      yoob <- y[oob]
+#      which1 <- which(yoob==levels(y)[1])
+#      noob1 <- length(which1)
+#      noob <- length(yoob)
+#      if (noob1==0|noob1==noob) { return(NA) }       # AUC cannot be computed if all OOB-observations are from one class
+#      return(1-sum(kronecker(xoob[which1] , xoob[-which1],">"))/(noob1*(length(yoob)-noob1)))       # calculate AUC
+#    })
+#  if (type == "survival") 
+#    return(function(x, oob, y) ipred::sbrier(y[oob, , drop = FALSE], x[oob]))
+#  else if (type %in% c("nominal2", "nominal"))
+#    return(function(x, oob, y) mean((levels(y)[sapply(x, which.max)] != y)[oob]))
+#  else if (type == "ordinal")
+#    return(function(x, oob, y) mean((sapply(x, which.max) != y)[oob]))
+#  else if (type == "regression")
+#    return(function(forest, oob, y) mean((unlist(x) - y)[oob]^2))
+#  else if (type == "classification")
+#    return(function(x, oob, y) mean((levels(y)[x] != y)[oob]))
+#}
 
 
 ## Function to select the observed variance function.
@@ -130,7 +130,8 @@ selectNullError <- function(type)
 }
 
 
-## varIDs returns the variable ID of the variables that are used for splitting in a tree
+## varIDs returns the variable ID of the variables that are used for splitting
+## in a tree.
 ## For trees in cforest, based on varIDs in party
 varIDs <- function(tree) 
 {
@@ -153,8 +154,7 @@ varIDs <- function(tree)
     return(v)
   }
   else {
-    # get the cutPoints
-    
+
     ## --------------------------------------
     ## return(tree$nodeInfo[,3])   # for old tree object
     ## --------------------------------------
@@ -178,7 +178,7 @@ getCutPoints <- function(tree, variableID)
   ## if(is.null(tree$nodeInfo)){     # for old tree object
   ## --------------------------------------
   
-  if(is.null(tree$forest)){
+  if(is.null(tree$forest)){          # tree grown by the party-package 
     cutp <- function(node) {
       if (node[[4]]) return(NULL)
       cp <- NULL
@@ -190,7 +190,7 @@ getCutPoints <- function(tree, variableID)
     }
     return(cutp(tree))
   }
-  else {
+  else {                            # tree grown by the randomForest-package
     # get the cutPoints
     
     ## --------------------------------------
@@ -215,7 +215,7 @@ getCutPoints <- function(tree, variableID)
   }
 }
 
-
+## create_cond_list function
 ## partly based on party, but different functionality
 ## create the list of variables to condition on:
 create_cond_list <- function(binnedVars, threshold, input, varsInTree, asParty)
@@ -249,7 +249,7 @@ create_cond_list <- function(binnedVars, threshold, input, varsInTree, asParty)
                l <- k + 1
                while(l <= nVars){
                   tableBinnedVars <- table(binnedVars[c(k,l)])
-                  testStats[k, l] <- quickChisq.test(tableBinnedVars)
+                  testStats[k, l] <- quickChisqTest(tableBinnedVars)
                   dfs[k, l] <- (nrow(tableBinnedVars) - 1L) * 
                      (ncol(tableBinnedVars) - 1L)
                   l <- l + 1
@@ -273,6 +273,7 @@ create_cond_list <- function(binnedVars, threshold, input, varsInTree, asParty)
    else stop("The threshold should be a value between 0 and 1.")
 }
 
+## conditional_perm function
 ## BASED ON PARTY, but different functionality
 ## function that permutes the values of a specific variable in a ctree conditionally 
 ## on (a set of) the other variables in the ctree according to the partitions based 
@@ -362,7 +363,7 @@ makeBinnedVars <- function(varsInTree, tree, oob, input){
 }
 
 
-## function that makes a list of sets observations per partition
+## function that makes a list of sets of observations per partition
 listParts <- function(partitions, oob){
    OOB <- which(oob)
    return(lapply(levels(partitions), function(part) {

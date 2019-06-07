@@ -158,7 +158,7 @@ permimp(object, ...)
   
   ###
   set.seed(290875)
-  readingSkills.rf <- randomForest(score ~ ., data = party::readingSkills, 
+  readingSkills.rf <- randomForest::randomForest(score ~ ., data = party::readingSkills, 
                               mtry = 2, ntree = 25, importance = TRUE, 
                               keep.forest = TRUE, keep.inbag = TRUE)
                               
