@@ -1,0 +1,33 @@
+importFrom("graphics", "abline", "arrows", "axis", "barplot", "boxplot", 
+           "par", "plot", "points", "polygon", "text")
+importFrom("grDevices", "dev.size")
+importFrom("methods", "extends")
+importFrom("stats", "complete.cases", "model.frame", "model.response", 
+           "pchisq", "predict", "quantile", "reformulate", "sd", 
+           "terms", "weights")
+importFrom("randomForest", "randomForest")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
+
+
+importClassesFrom("party", "RandomForest")
+
+export("permimp", 
+       "ranks",
+       "is.VarImp",
+	     "plot.VarImp",
+	     "as.VarImp",
+	     "selFreq"
+	     )
+
+S3method("as.VarImp", "data.frame")
+S3method("as.VarImp", "matrix")
+S3method("as.VarImp", "numeric")
+S3method("permimp", "default")
+S3method("permimp", "randomForest")
+S3method("permimp", "RandomForest")
+S3method("plot", "VarImp")
+S3method("print", "VarImp")
+S3method("ranks", "VarImp")
+S3method("ranks", "default")
+S3method("subset", "VarImp")
+
