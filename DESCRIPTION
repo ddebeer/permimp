@@ -3,9 +3,13 @@ Type: Package
 Title: Conditional Permutation Importance
 Version: 0.1-01
 Date: 2019-06-07
-Authors@R: c(person(given = "Dries", family = "Debeer", role = c("aut", "cre"), email = "dries.debeer@uzh.ch"),
+Authors@R: c(person(given = "Dries", family = "Debeer", role = c("aut", "cre"), email = "debeer.dries@gmail.com"),
 			 person(given = "Torsten", family = "Hothorn", role = "aut"),
 			 person(given = "Carolin", family = "Strobl", role = "aut"))
+Author: Dries Debeer [aut, cre],
+        Torsten Hothorn [aut],
+        Carolin Strobl [aut]
+Maintainer: Dries Debeer <debeer.dries@gmail.com>
 Description: An add-on to the 'party' package, with a faster implementation 
    of the partial-conditional permutation importance for 'cforest'. The 
    standard permutation importance is implemented exactly the same as in 

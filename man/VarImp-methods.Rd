@@ -75,7 +75,7 @@
   plot(permVIM, nVar = 2, type = "box", horizontal = TRUE)
   
   ## note the rankings
-  plot(subset(permVIM, c("age", "nativeSpeaker")), shadowColor = "pink")
-  plot(subset(permVIM, c("shoeSize", "nativeSpeaker")), shadowColor = "pink")
+  plot(subset(permVIM, c("age", "nativeSpeaker")), intervalColor = "pink")
+  plot(subset(permVIM, c("shoeSize", "nativeSpeaker")), intervalColor = "pink")
 }
 \keyword{tree}
