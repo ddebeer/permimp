@@ -30,5 +30,5 @@ Suggests: knitr,
           rmarkdown,
           scales (>= 0.5.0),
           testthat
-License: GPL-2
+License: GPL-2 | GPL-3
 VignetteBuilder: knitr

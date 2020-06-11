@@ -125,23 +125,9 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
             changeThres[treeNr, j, per] <- 1
             break}
           
-          ## different treatment for 
-          if(!is.null(inp)){
-            tmp <- inp
-            ## switch observations for only the selected var
-            tmp@variables[[j]][oob] <- tmp@variables[[j]][perm]
-            
-            ## predict with permuted var 
-            p <- pred(tree, tmp, mincriterion, -1L)
-          }
-          else {
-            tmp <- input
-            ## switch observations for only the selected var
-            tmp[oob,j] <- tmp[perm,j] 
-            
-            ## predict with permuted var 
-            p <- pred(tree, input = tmp)
-          }
+          ## replace premuted observations for predictor j
+          tmp <- replacePermVar(input, inp, permVarNr = j, oob, perm)
+          p <- pred(tree, tmp, mincriterion, -1L, input = tmp)
         }
         
         ## run through all rows of perror

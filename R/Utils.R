@@ -136,11 +136,6 @@ selectNullError <- function(type)
 varIDs <- function(tree) 
 {
   # different treatment when tree is based on randomForest-object
-  
-  ## --------------------------------------
-  ## if(is.null(tree$nodeInfo)){     # for old tree object
-  ## --------------------------------------
-    
   if(is.null(tree$forest)){
     v <- c()
     foo <- function(node) {
@@ -154,11 +149,6 @@ varIDs <- function(tree)
     return(v)
   }
   else {
-
-    ## --------------------------------------
-    ## return(tree$nodeInfo[,3])   # for old tree object
-    ## --------------------------------------
-    
     return(tree$forest$bestvar[,1])
   }
 }
@@ -172,12 +162,7 @@ varIDs <- function(tree)
 ## For trees in cforest, based on cutpoint_list() in party
 getCutPoints <- function(tree, variableID) 
 {
-  # different treatment when tree is based on randomForest-object
-  
-  ## --------------------------------------
-  ## if(is.null(tree$nodeInfo)){     # for old tree object
-  ## --------------------------------------
-  
+
   if(is.null(tree$forest)){          # tree grown by the party-package 
     cutp <- function(node) {
       if (node[[4]]) return(NULL)
@@ -192,21 +177,9 @@ getCutPoints <- function(tree, variableID)
   }
   else {                            # tree grown by the randomForest-package
     # get the cutPoints
-    
-    ## --------------------------------------
-    ## cutPoints <- tree$nodeInfo[tree$nodeInfo[,3] == variableID, 4]     # for old tree object
-    ## --------------------------------------
-    
     cutPoints <- tree$forest$xbestsplit[tree$forest$bestvar == variableID]
     
     # Check if variable is categorical
-    
-    ## --------------------------------------
-    ## if(tree$nrCatPerVar[variableID] > 1) {        # for old tree object
-    ##  cutPoints <- getCatLeft(cutPoints, tree$nrCatPerVar[variableID])
-    ## }     
-    ## --------------------------------------
-    
     nCat <- tree$forest$ncat[variableID]
     if(nCat > 1) {
       cutPoints <- getCatLeft(cutPoints, nCat)
@@ -378,3 +351,29 @@ GetUniqueParts <- function(PartsWithout, allParts){
    return(setdiff(PartsWithout, allParts))
 }
 
+
+## Function to go from the splitpoint-value for categorical predictors to
+## an indicator vector, indicating "left daughter node for this category"
+getCatLeft <- function(integer, nrCat)
+{
+  unlist(lapply(integer, FUN = function(x){
+    as.logical(intToBits(x))[1:nrCat]
+  }))
+}
+
+
+## Function to replace the permutated variable in the original data
+## replacePermVar Method
+replacePermVar <- function(input = NULL, inp = NULL, permVarNr, oob, perm){
+  if(!is.null(inp)){
+    tmp <- inp
+    ## switch observations for only the selected var
+    tmp@variables[[permVarNr]][oob] <- tmp@variables[[permVarNr]][perm]
+  } else {
+    tmp <- input
+    ## switch observations for only the selected var
+    tmp[oob, permVarNr] <- tmp[perm, permVarNr] 
+  }
+  tmp
+}
+  

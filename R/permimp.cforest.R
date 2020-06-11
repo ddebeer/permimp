@@ -24,7 +24,8 @@ permimp.RandomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
   if (asParty && missing(threshold))
     threshold <- 0.2
   
-  out <- doPermimp(object, input, inp = party::initVariableFrame(input, trafo = NULL),
+  out <- doPermimp(object, input, 
+                   inp = party::initVariableFrame(input, trafo = NULL),
                    y, OOB, threshold, conditional, 
                    whichxnames, ntree = length(object@ensemble), nperm, scaled,
                    progressBar, thresholdDiagnostics, 

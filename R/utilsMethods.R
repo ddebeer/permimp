@@ -15,7 +15,6 @@ getTree <- function(object, treeNr)
 getTree.default <- function(object, treeNr)
 {
   stop("The ", sQuote("getree"), " function only works for random forest objects from the party- and randomForest-packages.")
-  
 }
 
 
@@ -25,39 +24,17 @@ getTree.randomForest <- function(object, treeNr)
   oneTree <- object
   oneTree$forest$ndbigtree <- oneTree$forest$ndbigtree[treeNr]
   oneTree$forest$nodestatus <- oneTree$forest$nodestatus[, treeNr, drop = FALSE]
-  oneTree$forest$leftDaughter <- oneTree$forest$leftDaughter[, treeNr, drop = FALSE]
-  oneTree$forest$rightDaughter <- oneTree$forest$rightDaughter[, treeNr, drop = FALSE]
+  if(object$type == "regression"){
+    oneTree$forest$leftDaughter <- oneTree$forest$leftDaughter[, treeNr, drop = FALSE]
+    oneTree$forest$rightDaughter <- oneTree$forest$rightDaughter[, treeNr, drop = FALSE]
+  } else if(object$type == "classification"){
+    oneTree$forest$treemap <- oneTree$forest$treemap[, , treeNr, drop = FALSE]
+  }
   oneTree$forest$bestvar <- oneTree$forest$bestvar[, treeNr, drop = FALSE]
   oneTree$forest$nodepred <- oneTree$forest$nodepred[, treeNr, drop = FALSE]
   oneTree$forest$xbestsplit <- oneTree$forest$xbestsplit[, treeNr, drop = FALSE]
   oneTree$forest$ntree <- oneTree$ntree <- 1
   return(oneTree)
-  
-  
-  ## --------------------------------------
-  ## 
-  ## if(object$type == "regression"){
-  ##   nodeInfo <- cbind(object$forest$leftDaughter[, treeNr], 
-  ##                     object$forest$rightDaughter[, treeNr], 
-  ##                     object$forest$bestvar[, treeNr], 
-  ##                     object$forest$xbestsplit[, treeNr], 
-  ##                     object$forest$nodepred[, treeNr]
-  ##   )[1:object$forest$ndbigtree[treeNr], ]
-  ## } else {
-  ##   nodeInfo <- cbind(object$forest$treemap[, , treeNr], 
-  ##                     object$forest$bestvar[, treeNr], 
-  ##                     object$forest$xbestsplit[, treeNr], 
-  ##                     object$forest$nodepred[, treeNr]
-  ##   )[1:object$forest$ndbigtree[treeNr], ]
-  ## }
-  ## tree <- list(nodeInfo = nodeInfo, 
-  ##              nrCatPerVar = object$forest$ncat,
-  ##              catLevels = object$forest$xlevels,
-  ##              treeType = "randomForest")
-  ##
-  ## return(tree)
-  ## --------------------------------------
-
 }
 
 
@@ -68,7 +45,6 @@ getTree.RandomForest <- function(object, treeNr)
 }
 
 
-## --------------------------------------------------------------------------
 ## --------------------------------------------------------------------------
 
 
@@ -81,7 +57,6 @@ getOOB <- function(object, treeNr)
 getOOB.default <- function(object, treeNr)
 {
   stop("The ", sQuote("getOOB"), " function only works for random forest objects from the party- and randomForest-packages.")
-  
 }
 
 
@@ -99,7 +74,6 @@ getOOB.RandomForest <- function(object, treeNr)
 }
 
 
-## --------------------------------------------------------------------------
 ## --------------------------------------------------------------------------
 
 
@@ -141,7 +115,7 @@ getOutcomeType.RandomForest <- function(object)
   }
 }
 
-## --------------------------------------------------------------------------
+
 ## --------------------------------------------------------------------------
 
 
@@ -152,7 +126,7 @@ selectPred <- function(object, type, w, inp, y)
 
 # Function to select the prediction function for randomForest (randomForest)
 selectPred.randomForest <- function(object, type, w, inp, y)
-  return(function(tree, inp = NULL,  mincriterion = NULL, varPerm = NULL, input = NULL) 
+  return(function(tree, inputs = NULL,  mincriterion = NULL, varPerm = NULL, input = NULL) 
     
     ## --------------------------------------
     ## return(getPredsRF(tree, newData = input)))   # for old tree object
@@ -166,14 +140,14 @@ selectPred.RandomForest <- function(object, type, w, inp, y)
 {
   if (type == "survival") return(
     function(tree, inputs, mincriterion, varperm = -1L, input = NULL,
-             weights = w, oldinputs = inp, y = y){
+             weights = w, oldinputs = inp, Y = y){
       where <- .R_get_nodeID(tree, oldinputs, mincriterion, -1L)
       wh <- .R_get_nodeID(tree, inputs, mincriterion, as.integer(varperm))
       swh <- sort(unique(wh))
       RET <- vector(mode = "list", length = length(wh))
       for (i in 1:length(swh)) {
         w <- weights * (where == swh[i])
-        RET[wh == swh[i]] <- list(mysurvfit(y, weights = w))
+        RET[wh == swh[i]] <- list(mysurvfit(Y, weights = w))
       }
       return(RET)
     }
@@ -183,4 +157,9 @@ selectPred.RandomForest <- function(object, type, w, inp, y)
   )
   }
 }
+
+
+
+## --------------------------------------------------------------------------
+
 

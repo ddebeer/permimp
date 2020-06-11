@@ -6,7 +6,7 @@ importFrom("stats", "complete.cases", "model.frame", "model.response",
            "pchisq", "predict", "quantile", "reformulate", "sd", 
            "terms", "weights")
 importFrom("randomForest", "randomForest")
-importFrom("utils", "setTxtProgressBar", "txtProgressBar")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar", "menu")
 
 
 importClassesFrom("party", "RandomForest")

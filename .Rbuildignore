@@ -4,3 +4,4 @@
 .gitignore
 .Rhistory
 README.md
+^unused-functions.R$

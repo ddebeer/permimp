@@ -11,9 +11,7 @@ selFreq <- function(object, whichxnames = NULL)
    }
    else {
       whichVarIDs <- match(whichxnames, table = xnames)
-      if(length(whichVarIDs) < 1){
-         stop("Error: whichxnames is not a subset of the predictor variable names in the forest.")
-      }
+      if(all(is.na(whichVarIDs))) stop("Error: whichxnames is not a subset of the predictor variable names in the forest.")
       whichVarIDs <- whichVarIDs[order(whichVarIDs)]
    } 
    
@@ -29,10 +27,4 @@ selFreq <- function(object, whichxnames = NULL)
                     info = NULL)
    return(out)
 }
-
-
-
-
-
-
 

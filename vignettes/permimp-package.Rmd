@@ -239,11 +239,18 @@ rfAirq50 <- randomForest(Ozone ~ ., data = airq, mtry = 2, replace = FALSE,
 
 Note that `keep.forest = TRUE` and `keep.inbag = TRUE`. The `permimp`-function requires information about which observations were in-bag (IB) or out-of-bag (OOB), as well as information about the splitpoints in each tree. Without this information, the (Conditional) Permutation Importance algorithm cannot be executed.
 
-```{r, eval = TRUE, echo = TRUE}
+
+```{r, eval = TRUE, echo = FALSE}
+CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE, do_check = FALSE)
+plot(CPI_permimpRF, horizontal = TRUE)
+```
+
+```{r, eval = FALSE, echo = TRUE}
 CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE)
 plot(CPI_permimpRF, horizontal = TRUE)
 ```
 
+When calling `permimp` for a `randomForest` object form the `randomForest`-package, a menu is prompted that ask whether you are sure that the data-objects used to fit the random forest have not changed. This is because the `permimp` computations rely on those data-objects, and automatically search for them in the environment. If these data-objects have changed, the `permimp` results can be distorted. 
 
 
 ***
@@ -308,11 +315,13 @@ The $\chi^2$-independence test does not (directly) depend on sample size. Theref
 Under the new implementation it is possible that $Z$ differs across trees. Yet this is also the case under the original implementation, since not all predictors in $Z$ are used as splitting variable in each tree. In addition, due to the randomness in random forests (subsampling/bootstrapping and mtry selection), it is very unlikely that there are two trees in the forest with exactly the same splitting points. Therefore, the conditional sampling scheme almost surely differs across trees.
 
 ## D. How to Use the Threshold.
-The `threshold`-value can be interpreted as a tuning parameter to make the permuation more or less conditional. A `threshold = 0` and a `threshold = 1` corresponding to permuatationg as conditional as possible and permutating completely unconditional, respectively. A `threshold = .95`, the default in `permimp`, only includes those $W$ in $Z$ for which $W_d$ and $X_d$ are dependent (with $\alpha$-level = .05).  
+The `threshold`-value can be interpreted as a tuning parameter to make the permuation more or less conditional. A `threshold = 0` and a `threshold = 1` corresponding to permutating as conditional as possible and permutating completely unconditional, respectively. A `threshold = .95`, the default in `permimp`, only includes those $W$ in $Z$ for which $W_d$ and $X_d$ are dependent (with $\alpha$-level = .05). 
 
-Some research questions are best answered with an unconditional importance, while other questions are better answered using a conditional importance measure. In many situations, however, it is not clear which measure best fits the research question. Therefore, we argue that in these cases it can be interesting to evaluate the importance (rankings) of the predictors for different `threshold`-values, going from fully unconditional to more conditional. This strategy can provide more insight in how the conditioning affects the permutation importance values.
+Yet threshold values smaller than `threshold = .5` generally make the selection of the predictors to condition on too greedy, without a meaningfull impact on the CPI pattern. Therefore, we recommend using threshold values between .5 and 1.  
 
-In the original implementation, setting a sensible `threshold` proved to be hard, because the practial meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by @Debeer2019 suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations for lower `threshold`-values.
+Some research questions are best answered with a more marginal importance measure, while other questions are better answered using a more partial importance measure. In many situations, however, it is not clear which measure best fits the research question. Therefore, we argue that in these cases it can be interesting to evaluate the importance (rankings) of the predictors for different `threshold`-values. This strategy can provide more insight in how the conditioning affects the permutation importance values.
+
+In the original implementation, setting a sensible `threshold` proved to be hard, because the practial meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by @Debeer2019 suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations.
 
 As an additional feature, the `permimp` can provide some diagnostics about the conditional permuation. When  `thresholdDiagnostics = TRUE`, the `permimp`-function monitors whether or not a conditional permuation scheme was feasible for each predictor $X$ in each tree. This information is translated in messages that suggest to either or decrease the `threshold`. 
 

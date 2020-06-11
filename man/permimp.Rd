@@ -20,7 +20,7 @@
 permimp(object, ...)
 \method{permimp}{randomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
-     thresholdDiagnostics = FALSE, progressBar = TRUE, ...)
+     thresholdDiagnostics = FALSE, progressBar = TRUE,  do_check = TRUE, ...)
 \method{permimp}{RandomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
      thresholdDiagnostics = FALSE, progressBar = TRUE, 
@@ -50,9 +50,10 @@ permimp(object, ...)
                    to child nodes of splits in the variable of interest
                    are permuted as described by Hapfelmeier et al. (2012),
                    which allows for missing values in the predictors and is
-				   more efficient with respect to memory consumption and 
+                   more efficient with respect to memory consumption and 
                    computing time. This method does not apply to conditional
-                   permutation importances.} 
+                   permutation importances, nor to random forests that were not
+                   fit using the party package.} 
   \item{scaled}{ a logical that determins whether the differences in prediction
                  accuracy should be scalled by the total (null-model) error.}
   \item{AUC}{ a logical that determins whether the Area Under the Curve (AUC)
@@ -72,6 +73,8 @@ permimp(object, ...)
 							   prompted as warnings.}
   \item{progressBar}{ a logical that determins whether a progress bar should 
                       be displayed.}
+  \item{do_check}{ a logical that determins whether a check requiring user 
+                   input should be included.}                    
   \item{...}{ additional arguments to be passed to the Mehtods}
 }
 \details{
@@ -165,14 +168,14 @@ permimp(object, ...)
     
   ### (unconditional) Permutation Importance
   set.seed(290875)
-  permimp(readingSkills.rf)
+  permimp(readingSkills.rf, do_check = FALSE)
   
   # very close to
   readingSkills.rf$importance[,1]
   
   ### Conditional Permutation Importance
   set.seed(290875)
-  permimp(readingSkills.rf, conditional = TRUE, threshold = .8)
+  permimp(readingSkills.rf, conditional = TRUE, threshold = .8, do_check = FALSE)
                               
   
 }
