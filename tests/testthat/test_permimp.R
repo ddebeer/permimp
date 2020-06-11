@@ -150,15 +150,14 @@ test_that("unconditional permimp is the same as unconditional varimp", {
   set.seed(1)
   varimp <- varimp(cf_surv)
   set.seed(1)
-  # Awaiting change in party package (party:::.R_get_nodeID)
-  #permimp <- permimp(cf_surv)
-  #expect_equal(varimp, permimp$values)
+  permimp <- permimp(cf_surv)
+  expect_equal(varimp, permimp$values)
   
   set.seed(1)
   varimp <- varimp(cf_surv, conditional = TRUE)
   set.seed(1)
-  #permimp <- permimp(cf_surv, conditional = TRUE, asParty = TRUE)
-  #expect_equal(varimp, permimp$values)
+  permimp <- permimp(cf_surv, conditional = TRUE, asParty = TRUE)
+  expect_equal(varimp, permimp$values)
   
 })
 
