@@ -1,4 +1,6 @@
-### (Conditional) Permuation Importance for Random Forests. [![Build Status](https://travis-ci.org/ddebeer/permimp.svg?branch=master)](https://travis-ci.org/ddebeer/permimp)
+### (Conditional) Permuation Importance for Random Forests. [![Build Status](https://travis-ci.org/ddebeer/permimp.svg?branch=master)](https://travis-ci.org/ddebeer/permimp) [![codecov](https://codecov.io/gh/ddebeer/permimp/branch/master/graph/badge.svg)](https://codecov.io/gh/ddebeer/permimp)
+
+
 
 This R-package computes the Conditional Permutation Importance (CIP; Strobl, 2008) using an alternative implemantation that is both faster and more stable. The (C)PI can be computed for random forest fit using (a) the original impurity reduction method ( `randomForest`-package), and (b) using the Conditional Inference framework (`party`-package). In addition, a plotting method for the resulting `VarImp`-object is included.
 
@@ -64,7 +66,6 @@ rfAirq5 <- randomForest(Ozone ~ ., data = airq,
                         keep.forest = TRUE, keep.inbag = TRUE)
                         
 ### compute the conditional permutation importance                      
-permimp_rf <- permimp(rfAirq5, conditional = TRUE, do_check = FALSE, 
-                      whichxnames = c("Solar.R", "Wind", "Temp", "Month"))
+permimp_rf <- permimp(rfAirq5, conditional = TRUE)
 plot(permimp_rf, horizontal = TRUE)
 ```
