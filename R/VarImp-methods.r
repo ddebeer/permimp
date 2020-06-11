@@ -82,7 +82,7 @@ plot.VarImp <- function(x, nVar = length(x$values),
       paste0(" (threshold = ", x$info$threshold, ")")
    } else {""}
    title <- 'if'(is.null(main),
-                 paste0(x$type, " Variable Importance", adToTitle),
+                 paste0(x$type, " Importance", adToTitle),
                  main)
   
   # bar plot
