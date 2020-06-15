@@ -24,7 +24,7 @@
   \code{\link{VarImp}}.
 }
 \value{
-  A vector containing the reversed ranings.
+  A vector containing the reversed rankings.
 }
 \examples{
   ## High Jump data

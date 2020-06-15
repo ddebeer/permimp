@@ -2,7 +2,7 @@
 \alias{selFreq}
 \title{ Predictor Selection Frequency in Random Forests }
 \description{
-    counts hom many times each predictor variable was selected for splitting
+    counts how many times each predictor variable was selected for splitting
     in a random forest. Only implemented for \code{\link{cforest}} form the \pkg{party}
     package.
 }
@@ -16,7 +16,7 @@ selFreq(object, whichxnames = NULL)
 }
 \details{
 
-  Function \code{selFreq} counts hom many times each predictor variable was 
+  Function \code{selFreq} counts how many times each predictor variable was 
   selected for splitting in a random forest. In the current implementation this 
   \code{selFreq} can only be applied to random forests as returned by 
   \code{cforest}.

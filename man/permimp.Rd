@@ -2,19 +2,19 @@
 \alias{permimp}
 \alias{permimp.randomForest}
 \alias{permimp.RandomForest}
-\title{ Random Forest Permutation Importance for cforests}
+\title{ Random Forest Permutation Importance for random forests}
 \description{
     Standard and partial/conditional permutation importance for 
     random forest-objects fit using the \pkg{party} or \pkg{randomForest} 
     packages, following the permutation principle of the `mean decrease in 
-    accuracy' importance in `randomForest'. The partial/conditional permutation
+    accuracy' importance in \pkg{randomForest} . The partial/conditional permutation
     importance is implemented differently, selecting the predictions to condition 
     on in each tree using Pearson Chi-squared tests applied to the 
-    by-splitpoint-categorized predictors. In general the new implementation has
+    by-split point-categorized predictors. In general the new implementation has
     similar results as the original \code{\link{varimp}} function. With 
     \code{asParty = TRUE}, the partial/conditional permutation importance is 
-    fully backward-compatable but faster than the orignal \code{\link{varimp}}
-    function in\pkg{party}.
+    fully backward-compatible but faster than the original \code{\link{varimp}}
+    function in \pkg{party}.
 }
 \usage{ 
 permimp(object, ...)
@@ -33,35 +33,35 @@ permimp(object, ...)
                        computation of the importance. The default 
                        \code{mincriterion = 0} guarantees that all splits 
                        are included.}
-  \item{conditional}{ a logical that determins whether unconditional or conditional 
+  \item{conditional}{ a logical that determines whether unconditional or conditional 
                       permutation is performed. }
   \item{threshold}{ the threshold value for (1 - p-value) of the association 
                     between the predictor of interest and another predictor, which 
-                    must be exceeded inorder to include the other predictor in 
+                    must be exceeded in order to include the other predictor in 
                     the conditioning scheme for the predictor of interest (only
                     relevant if \code{conditional = TRUE}). A threshold value of 
                     zero includes all other predictors.}
   \item{nperm}{ the number of permutations performed.}
-  \item{OOB}{ a logical that determins whether the importance is computed from 
+  \item{OOB}{ a logical that determines whether the importance is computed from 
               the out-of-bag sample or the learning sample (not suggested).}
-  \item{pre1.0_0}{ Prior to party version 1.0-0, the actual data values
+  \item{pre1.0_0}{ Prior to \pkg{party} version 1.0-0, the actual data values
                    were permuted according to the original permutation
                    importance suggested by Breiman (2001). Now the assignments
                    to child nodes of splits in the variable of interest
                    are permuted as described by Hapfelmeier et al. (2012),
                    which allows for missing values in the predictors and is
                    more efficient with respect to memory consumption and 
-                   computing time. This method does not apply to conditional
-                   permutation importances, nor to random forests that were not
-                   fit using the party package.} 
-  \item{scaled}{ a logical that determins whether the differences in prediction
-                 accuracy should be scalled by the total (null-model) error.}
-  \item{AUC}{ a logical that determins whether the Area Under the Curve (AUC)
+                   computing time. This method does not apply to the conditional
+                   permutation importance, nor to random forests that were not
+                   fit using the \pkg{party} package.} 
+  \item{scaled}{ a logical that determines whether the differences in prediction
+                 accuracy should be scaled by the total (null-model) error.}
+  \item{AUC}{ a logical that determines whether the Area Under the Curve (AUC)
               instead of the accuracy is used to compute the permutation 
-			  importances (cf. Janitza et al., 2012). The AUC-based permutation 
+			  importance (cf. Janitza et al., 2012). The AUC-based permutation 
 			  importance is more robust towards class imbalance, but it is 
 			  only applicable to binary classification.}
-  \item{asParty}{ a logical that determins whether or not exactly the same 
+  \item{asParty}{ a logical that determines whether or not exactly the same 
                   values as the original \code{\link{varimp}} function in 
 				  \pkg{party} should be obtained.}
   \item{whichxnames}{ a character vector containing the predictor variable 
@@ -71,21 +71,21 @@ permimp(object, ...)
   \item{thresholdDiagnostics}{ a logical that specifies whether diagnostics 
                                with respect to the threshold-value should be 
 							   prompted as warnings.}
-  \item{progressBar}{ a logical that determins whether a progress bar should 
+  \item{progressBar}{ a logical that determines whether a progress bar should 
                       be displayed.}
-  \item{do_check}{ a logical that determins whether a check requiring user 
+  \item{do_check}{ a logical that determines whether a check requiring user 
                    input should be included.}                    
-  \item{...}{ additional arguments to be passed to the Mehtods}
+  \item{...}{ additional arguments to be passed to the Methods}
 }
 \details{
 
   Function \code{permimp} is highly comparable to \code{\link{varimp}} in \pkg{party},
   but the partial/conditional variable importance has a different, more efficient
-  implementation. Compared to the orignal \code{\link{varimp}} in \pkg{party}, 
+  implementation. Compared to the original \code{\link{varimp}} in \pkg{party}, 
   \code{permimp} applies a different strategy to select the predictors to condition 
   on (ADD REFERENCE TO PAPER). 
   
-  With \code{asParty = TRUE}, permimp returns exatly the same values as 
+  With \code{asParty = TRUE}, permimp returns exactly the same values as 
   \code{\link{varimp}} in \pkg{party}, but the computation is done more efficiently.
   
   If \code{conditional = TRUE}, the importance of each variable is computed by
@@ -101,7 +101,7 @@ permimp(object, ...)
   limited to this selection of predictors. Only use when fully aware of the 
   implications.
   
-  For further deatils, please refer to the documentation of \code{\link{varimp}}.
+  For further details, please refer to the documentation of \code{\link{varimp}}.
 }
 \value{
     An object of class \code{\link{VarImp}}, with the mean decrease in accuracy 

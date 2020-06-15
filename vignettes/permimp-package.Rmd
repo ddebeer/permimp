@@ -24,11 +24,11 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>",
 
 # Introduction
 
-Although originally designed for prediction purposes, Random forests @Breiman2001 have become a popular tool to assess the importance of predictors. Several methods and measures have been proposed, one of the most popular ones is the *Permuation Importance* @Breiman2001, originally refered to as the Mean Decrease in Accuracy. Inspired by the contrast between the *unconditional* zero-order correlation between predictor and outcome, and the *conditional* standardized regression coefficient in multiple linear regression, @Strobl2008 argued that in some cases the importance of a predictor, conditionally on (all) other predictors, may be of higher interest than the *unconditional* importance. Therefore, they proposed the *Conditional Permuation Importance*, which introduces a conditional permutation scheme that is based on the dependence between the predictors.
+Although originally designed for prediction purposes, Random forests @Breiman2001 have become a popular tool to assess the importance of predictors. Several methods and measures have been proposed, one of the most popular ones is the *Permutation Importance* @Breiman2001, originally referred to as the Mean Decrease in Accuracy. Inspired by the contrast between the *unconditional* zero-order correlation between predictor and outcome, and the *conditional* standardized regression coefficient in multiple linear regression, @Strobl2008 argued that in some cases the importance of a predictor, conditionally on (all) other predictors, may be of higher interest than the *unconditional* importance. Therefore, they proposed the *Conditional Permutation Importance*, which introduces a conditional permutation scheme that is based on the dependence between the predictors.
 
-The `permimp`-package presents a different implementation of this *Conditional Permuation Importance*. Unlike the original implementation (available in the `party` R-package of  @Hothorn2006), `permimp` can, in addition to random forests that were grown according to the unbiased recursive partitioning (cf. `cforests`; @Hothorn2006), also deal with with random forests that were grown using the `randomForest`-package @Liaw2002, which applies the original tree growing algorithm based on impurity reduction @Breiman2001. (In principle, the `permimp` can be extended to random forests grown by other packages, unter the condition that tree-wise predictions are possible and OOB-information as well as the split points are available per tree.) We argue that the `permimp`-package can be seen as a replacement for the `varimp`-functions of the `party` package in R. 
+The `permimp`-package presents a different implementation of this *Conditional Permutation Importance*. Unlike the original implementation (available in the `party` R-package of  @Hothorn2006), `permimp` can, in addition to random forests that were grown according to the unbiased recursive partitioning (cf. `cforests`; @Hothorn2006), also deal with with random forests that were grown using the `randomForest`-package @Liaw2002, which applies the original tree growing algorithm based on impurity reduction @Breiman2001. (In principle, the `permimp` can be extended to random forests grown by other packages, under the condition that tree-wise predictions are possible and OOB-information as well as the split points are available per tree.) We argue that the `permimp`-package can be seen as a replacement for the `varimp`-functions of the `party` package in R. 
 
-This vignette has two main parts. The first part is tutorial-like and demonstrates functionality of the `permimp`-package (by also comparing it to original `party::varimp`-functions. The second part is more theoretical and explains the how and the why of the new *Conditional Permuation Importance*-implementation.
+This vignette has two main parts. The first part is tutorial-like and demonstrates functionality of the `permimp`-package (by also comparing it to original `party::varimp`-functions. The second part is more theoretical and explains the how and the why of the new *Conditional Permutation Importance*-implementation.
 
 <br> 
 
@@ -49,7 +49,7 @@ cfAirq50 <- cforest(Ozone ~ ., data = airq,
                                               minsplit = 10))
 ```
 
-### A.1. New Conditional Permuation Importance
+### A.1. New Conditional Permutation Importance
 
 Let's start by comparing the `permimp` and the `varimp` function for the conditional permutation importance.
 
@@ -62,7 +62,7 @@ CPI_varimp
 
 Three differences can easily be spotted:
 
-* `perminp` has a `progressBar`-argument. The default is `progressBar = TRUE`^[`progressBar = FALSE` was used, because a progress bar is not represented well in Rmarkdown.]
+* `perminp` has a `progressBar`-argument. The default is `progressBar = TRUE`^[`progressBar = FALSE` was used, because a progress bar is not represented well using R markdown.]
 * `permimp` is faster than `varimp`.
 * The results are different.
 
@@ -91,7 +91,7 @@ CPI_varimp
 
 The differences between the two implementations (and why we believe the new implementation is more attractive), is explained in the second part of this document, as well as in this manuscript: @Debeer2019. 
 
-### A.3. Backward Compatibel with `party` when: `asParty = TRUE`
+### A.3. Backward Compatible with `party` when: `asParty = TRUE`
 
 By specifying `asParty = TRUE`, the `permimp`-function can be made backward compatible with the `party::varimp`-function.  But `permimp` is a bit faster. To get exactly the same results, the random seeds should be exactly the same. 
 
@@ -109,8 +109,8 @@ Note that with `asParty = TRUE` the default `threshold`-value is automatically s
 ### A.4. Different Output: `VarImp`-object
 A less obvious difference between `permimp` and `varimp` is the object that it returns. `permimp` returns an S3-class object: `VarImp`, rather than a named numerical vector. A `VarImp` object is a named list with four elements:
 
-1. `$values`: holds the computed variable importances. 
-2. `$perTree`: holds the variable importances per tree (averaged over the permutations when `nperm > 1`).
+1. `$values`: holds the computed variable importance values. 
+2. `$perTree`: holds the variable importance values per tree (averaged over the permutations when `nperm > 1`).
 3. `$type`: the type of variable importance.
 4. `$info`: other relevant information about the variable importance, such as the used `threshold`.
 
@@ -126,12 +126,12 @@ str(CPI_asParty)
 all(CPI_asParty$values == CPI_varimp)
 ```
 
-An advantage of the `VarImp`-object, is that the `$perTree`-values kan be used to inspect the distribution of the importance values across the trees in a forest. For instance, the plotting function (demonstrated below) can be used to visualize this distribution of per tree importance values.
+An advantage of the `VarImp`-object, is that the `$perTree`-values can be used to inspect the distribution of the importance values across the trees in a forest. For instance, the plotting function (demonstrated below) can be used to visualize this distribution of per tree importance values.
 
 
 ### A.5. Unconditional Permutation Importance: `permimp` = `varimp`
 
-Of course, there is also the option to compute the unconditional permutation importance. Both using the original and the splitwise permutation algorithm. Here, there are no differences between `permimp` and `varimp`. That is, `permimp` simply uses the `party` `varimp` code, making the `asParty` argument redundant in this case. Note, however, that `permimp` still returns a `VarImp-object`.
+Of course, there is also the option to compute the unconditional permutation importance. Both using the original and the split wise permutation algorithm. Here, there are no differences between `permimp` and `varimp`. That is, `permimp` simply uses the `party` `varimp` code, making the `asParty` argument redundant in this case. Note, however, that `permimp` still returns a `VarImp-object`.
 
 ```{r eval = TRUE, echo = TRUE} 
 ## Original Unconditional Permutation Importance
@@ -158,7 +158,7 @@ For more detailed information check `?permimp`.
 
 ### B.1. `plot`
 
-Visualizing the variable importances (as a `VarImp`-object) is easy using the `plot` method. Its main features include:
+Visualizing the variable importance values (as a `VarImp`-object) is easy using the `plot` method. Its main features include:
 
 * Four plot types:`type = c("bar", "box", "dot", "rank"). 
 * Predictors automatically ordered according to importance value (high to low). Setting the argument `sort = FALSE` renders the original order (cf. the `cforest` call).
@@ -205,7 +205,7 @@ plot(PI_permimp500, type = "dot", sort = FALSE,
 #### Although we would advise against this in most situations, you can also:
 
 * Plot only the `<integer value>` predictors with the highest values with `nVar = <integer value>`.  
-* Visualize the distribution using the standard deviation of the `perTree` values with `interval = "sd". This is almost always a very bad idea, because it falsely suggests that the distribution is symmetric. Please don't use this option.
+* Visualize the distribution using the standard deviation of the `perTree` values with `interval = "sd"`. This is almost always a very bad idea, because it falsely suggests that the distribution is symmetric. Please don't use this option.
 
 For more detailed information check `?plot.VarImp`.
 
@@ -220,7 +220,7 @@ For more detailed information check `?plot.VarImp`.
 
 Other related functions are:
 
-* `as.VarImp`: creates a `VarImp`-object from a `matrix`/`data.frame` of perTree values, or from a numerical vector of importance values.
+* `as.VarImp`: creates a `VarImp`-object from a `matrix`/`data.frame` of `perTree` values, or from a numerical vector of importance values.
 * `is.VarImp`: checks if an object is of the `VarImp`-class.
 
 
@@ -237,7 +237,7 @@ rfAirq50 <- randomForest(Ozone ~ ., data = airq, mtry = 2, replace = FALSE,
                          nodesize = 7, keep.forest = TRUE, keep.inbag = TRUE)
 ```
 
-Note that `keep.forest = TRUE` and `keep.inbag = TRUE`. The `permimp`-function requires information about which observations were in-bag (IB) or out-of-bag (OOB), as well as information about the splitpoints in each tree. Without this information, the (Conditional) Permutation Importance algorithm cannot be executed.
+Note that `keep.forest = TRUE` and `keep.inbag = TRUE`. The `permimp`-function requires information about which observations were in-bag (IB) or out-of-bag (OOB), as well as information about the split points in each tree. Without this information, the (Conditional) Permutation Importance algorithm cannot be executed.
 
 
 ```{r, eval = TRUE, echo = FALSE}
@@ -255,42 +255,42 @@ When calling `permimp` for a `randomForest` object form the `randomForest`-packa
 
 ***
 
-# Part II: New Conditional Permutation Implentation
+# Part II: New Conditional Permutation Implementation
 This part explains the new implementation of the conditional permutation importance, and discusses the differences with the original implementation in `party`, as described by @Strobl2008. First the the idea behind the conditional implementation is briefly recapitulated, followed by a discussion of the original implementation. Then the new implementation is explained, and the main differences with the original are emphasized. Finally, some practical implications of the new implementation are given, and the interpretation and possible use of the `threshold` value are discussed.
 
-## A. Recapitulation: Conditional Permuation Importance.
+## A. Recapitulation: Conditional Permutation Importance.
 A researcher may be interested in whether a predictor $X$ and the outcome $Y$ are independent. The "null-hypothesis" is then $P(Y | X) = P(Y)$. This corresponds with the unconditional permutation importance. When $X$ and $Y$ are indeed independent, permuting $X$ should not significantly change the prediction accuracy of the tree/forest. The expected permutation importance value is zero.
 
 However, a researcher may also be interested in the conditional independence of $X$ and $Y$, conditionally on the values of some *other predictors* $Z$. The "null-hypothesis" is then $P(Y | X, Z) = P(Y | Z)$. Rather than "completely" permuting the $X$ values, the $X$ values can be permuted conditionally, given their corresponding $Z$ values. This corresponds to the conditional permutation scheme. When $X$ and $Y$ are conditionally independent, ideally, a conditional importance measure should be zero. 
 
 If $X$ and $Z$ are independent, both permutation schemes will give the same results. Or in practice, similar importance values. Yet a dependence between $X$ and $Z$ will result in differences between the unconditional and the conditional permutation schemes, and the corresponding importance values. 
 
-@Strobl2008 proposed to specify a partitioning (grid) of the predictor space based on $Z$ (for each tree), in order to (conditionally) permute the values of $X$ withing each parition (i.e., cell in the grid). According to @Strobl2008 this partitioning should (1) be applicable to variables of all types; (2) be as parsimonious as possible, but (3) be also computationally feasible. Therefore they suggested to define the partitioning grid for each tree by means of the partitions of the predictor space induced by that tree. More precisely, using all the splitpoints for $Z$ in the tree, $Z$ is discritized and the complete predictor space is partitioned using the discritized $Z$. 
+@Strobl2008 proposed to specify a partitioning (grid) of the predictor space based on $Z$ (for each tree), in order to (conditionally) permute the values of $X$ withing each partition (i.e., cell in the grid). According to @Strobl2008 this partitioning should (1) be applicable to variables of all types; (2) be as parsimonious as possible, but (3) be also computationally feasible. Therefore they suggested to define the partitioning grid for each tree by means of the partitions of the predictor space induced by that tree. More precisely, using all the split points for $Z$ in the tree, $Z$ is discretized and the complete predictor space is partitioned using the discretized $Z$. 
 
-Note that this paritioning does not correspond with the recursive partitioning of a tree. In a tree only the top node splits the complete predictor space, all the following splits are conditional on the parent nodes. In contrast, for the conditional permuation grid, all the split points split the complete predictor space, which leads to a more fine-grained grid.
+Note that this partitioning does not correspond with the recursive partitioning of a tree. In a tree only the top node splits the complete predictor space, all the following splits are conditional on the parent nodes. In contrast, for the conditional permutation grid, all the split points split the complete predictor space, which leads to a more fine-grained grid.
 
 
-In practice, the number of observations is finite. In situation with a relatively low number of observations, the grid for the conditional permuation may become to fine grained, making conditionally permuting practically infeasible. Therefore, the selection of $Z$ (the predictors to condition on) is not a sinecure.
+In practice, the number of observations is finite. In situation with a relatively low number of observations, the grid for the conditional permutation may become to fine grained, making conditionally permuting practically infeasible. Therefore, the selection of $Z$ (the predictors to condition on) is not a sinecure.
 
 ## B. Original Implementation (`party::varimp`)
-In their original implementation (cf, `party::varimp`), @Strobl2008 argued to only include those variables in $Z$ whose empirical correlation with $X$ exceeds a certain moderate threshold. For contiuous variables the Pearson correlation could be used, but for the general case they proposed to use the conditional inference framework promoted by @Hothorn2006. Applying this framework provides *p*-values, which have the advantage that they are comparable for variables of all types, and that they can serve as an intuitive and objective means of selecting the variables Z to condition on.
+In their original implementation (cf, `party::varimp`), @Strobl2008 argued to only include those variables in $Z$ whose empirical correlation with $X$ exceeds a certain moderate threshold. For continuous variables the Pearson correlation could be used, but for the general case they proposed to use the conditional inference framework promoted by @Hothorn2006. Applying this framework provides *p*-values, which have the advantage that they are comparable for variables of all types, and that they can serve as an intuitive and objective means of selecting the variables Z to condition on.
 
 The original implementation can be described as follows:
 
 > For every predictor $X$
 > 
-> 1. Test which other predictors are related to $X$, aplying the conditional inference framework [@Hothorn2006Lego] using **the full data/training set**.
-> 2. Only inlcude those other predictors in $Z$ for which the $p$-value of the test is smaller than `(1 - threshold)`.
+> 1. Test which other predictors are related to $X$, applying the conditional inference framework [@Hothorn2006Lego] using **the full data/training set**.
+> 2. Only include those other predictors in $Z$ for which the $p$-value of the test is smaller than `(1 - threshold)`.
 > 3. Within each tree:
->     1. Gather all the splitpoints for every predictor in $Z$.
->     2. Discritize the predictors in $Z$ using the gathered splitpoints, and create a partitioning of the predictor space.
+>     1. Gather all the split points for every predictor in $Z$.
+>     2. Discretize the predictors in $Z$ using the gathered split points, and create a partitioning of the predictor space.
 >     3. Within each partition, permute the values of predictor $X$.
    
     
 ### Some issues
-There are, however, two important issutes with this implementation:
+There are, however, two important issues with this implementation:
 
-1. For (some of) the tests in the conditional inference framework, the $p$-values not only depen\ on the strenght of the (cor)relation, but also on the sample size. For instance, in big samples small correlations can also lead to small $p$-values.
+1. For (some of) the tests in the conditional inference framework, the $p$-values not only depend on the strength of the (cor)relation, but also on the sample size. For instance, in big samples small correlations can also lead to small $p$-values.
 2. (Some of the tests in) the conditional inference framework only test for linear dependence. For instance, for continuous variables a correlation test is used. Of course, dependence between variables is not limited to linear dependence. As a result, when $X$ and $W$ are continuous and have a U-shaped independence structure, $W$ will not be included in $Z$.
 
 
@@ -299,33 +299,33 @@ The new implementation tries to mitigate the two issues raised above, by taking 
 
 > **In every tree**, for every predictor with splits in the tree:
 > 
-> 1. Discretize the in-bag values for each predictor using the splitpoints: $X$ => $X_d$.
+> 1. Discretize the in-bag values for each predictor using the split points: $X$ => $X_d$.
 > 
 > 2. For every discretized $X_d$:
 > 
->     1. Test which other discretized predictors $W_d$ are related to $X_d$, aplying a $\chi^2$-independence tests (using only the in-bag values).
->     2. Only inlcude those other predictors $W$ in $Z$ for which the $p$-value of the test is smaller than `(1 - threshold)`.
->     3. Create the partitioning of the predictor space uzing the discretized $Z$.
+>     1. Test which other discretized predictors $W_d$ are related to $X_d$, applying a $\chi^2$-independence tests (using only the in-bag values).
+>     2. Only include those other predictors $W$ in $Z$ for which the $p$-value of the test is smaller than `(1 - threshold)`.
+>     3. Create the partitioning of the predictor space using the discretized $Z$.
 >     4. Within each partition, permute the values of predictor $X$.
 
 
 ### Important implications
 The $\chi^2$-independence test does not (directly) depend on sample size. Therefore, the new implementation is less sensitive to the number of observations. In addition, the $\chi^2$-independence test is not limited to linear dependence. Hence, the new implementation mitigates the two issue raised above. Because of this, the `threshold`-value is easier to use and interpret (see below).  
 
-Under the new implementation it is possible that $Z$ differs across trees. Yet this is also the case under the original implementation, since not all predictors in $Z$ are used as splitting variable in each tree. In addition, due to the randomness in random forests (subsampling/bootstrapping and mtry selection), it is very unlikely that there are two trees in the forest with exactly the same splitting points. Therefore, the conditional sampling scheme almost surely differs across trees.
+Under the new implementation it is possible that $Z$ differs across trees. Yet this is also the case under the original implementation, since not all predictors in $Z$ are used as splitting variable in each tree. In addition, due to the randomness in random forests (subsampling/bootstrapping and `mtry` selection), it is very unlikely that there are two trees in the forest with exactly the same splitting points. Therefore, the conditional sampling scheme almost surely differs across trees.
 
 ## D. How to Use the Threshold.
-The `threshold`-value can be interpreted as a tuning parameter to make the permuation more or less conditional. A `threshold = 0` and a `threshold = 1` corresponding to permutating as conditional as possible and permutating completely unconditional, respectively. A `threshold = .95`, the default in `permimp`, only includes those $W$ in $Z$ for which $W_d$ and $X_d$ are dependent (with $\alpha$-level = .05). 
+The `threshold`-value can be interpreted as a tuning parameter to make the permutation more or less conditional. A `threshold = 0` and a `threshold = 1` corresponding to permuting as conditional as possible and permuting completely unconditional, respectively. A `threshold = .95`, the default in `permimp`, only includes those $W$ in $Z$ for which $W_d$ and $X_d$ are dependent (with $\alpha$-level = .05). 
 
-Yet threshold values smaller than `threshold = .5` generally make the selection of the predictors to condition on too greedy, without a meaningfull impact on the CPI pattern. Therefore, we recommend using threshold values between .5 and 1.  
+Yet threshold values smaller than `threshold = .5` generally make the selection of the predictors to condition on too greedy, without a meaningful impact on the CPI pattern. Therefore, we recommend using threshold values between .5 and 1.  
 
 Some research questions are best answered with a more marginal importance measure, while other questions are better answered using a more partial importance measure. In many situations, however, it is not clear which measure best fits the research question. Therefore, we argue that in these cases it can be interesting to evaluate the importance (rankings) of the predictors for different `threshold`-values. This strategy can provide more insight in how the conditioning affects the permutation importance values.
 
-In the original implementation, setting a sensible `threshold` proved to be hard, because the practial meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by @Debeer2019 suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations.
+In the original implementation, setting a sensible `threshold` proved to be hard, because the practical meaning of the `threshold` depended on the sample size and on the type of variables (cf. the issues raised above). In the new implementation, the `threshold`'s interpretation is clearer and more stable. In addition, the simulation studies by @Debeer2019 suggest that the new implementation (a) allows a more gradual shift from unconditional to conditional; and (b) gives more stable importance measure computations.
 
-As an additional feature, the `permimp` can provide some diagnostics about the conditional permuation. When  `thresholdDiagnostics = TRUE`, the `permimp`-function monitors whether or not a conditional permuation scheme was feasible for each predictor $X$ in each tree. This information is translated in messages that suggest to either or decrease the `threshold`. 
+As an additional feature, the `permimp` can provide some diagnostics about the conditional permutation. When  `thresholdDiagnostics = TRUE`, the `permimp`-function monitors whether or not a conditional permutation scheme was feasible for each predictor $X$ in each tree. This information is translated in messages that suggest to either or decrease the `threshold`. 
 
-First, it is possible that the conditioning grid is so fine-grained that permuating $X$ conditionally cannot lead to observations ending up in a different end-node of the tree. In other words, the prediction accuracy before and after permuting will be always equal. If this issue occurs in more than 50 percent of the trees that include $X$ as a splitting variable, `permimp` will produce a note, and suggest to increase the `threshold`-value. A higher `threshold`-value may result in a less fine-grained partitioning, making the conditional permutation feasible again.
+First, it is possible that the conditioning grid is so fine-grained that permuting $X$ conditionally cannot lead to observations ending up in a different end-node of the tree. In other words, the prediction accuracy before and after permuting will be always equal. If this issue occurs in more than 50 percent of the trees that include $X$ as a splitting variable, `permimp` will produce a note, and suggest to increase the `threshold`-value. A higher `threshold`-value may result in a less fine-grained partitioning, making the conditional permutation feasible again.
 
 Second, it is possible that there are no $W$ in the tree for which the $\chi^2$-independence test between $W_d$ and $X_d$ is smaller than `(1 - threshold)`. This implies $Z$ will be an empty set, and conditionally permuting is impossible. That is, without a partitioning/grid, it is equal to unconditionally permuting. If this issue occurs in more than 50 percent of the trees that include $X$ as a splitting variable, `permimp` will produce a note, and suggest to decrease the `threshold`-value. A lower `threshold`-value includes more $W$ in $Z$, making the conditional permutation feasible again.
 

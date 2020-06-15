@@ -4,4 +4,8 @@
 .gitignore
 .Rhistory
 README.md
+cran-comments.md
 ^unused-functions.R$
+^doc$
+^Meta$
+^appveyor\.yml$

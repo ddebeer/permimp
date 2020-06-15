@@ -18,7 +18,7 @@
 }
 \arguments{
   \item{x}{ an object of the class \code{\link{VarImp}}.}
-  \item{nVar}{ an integer speciying the number of predictor variables that should be 
+  \item{nVar}{ an integer specifying the number of predictor variables that should be 
                included in the plot. The \code{nVar} predictor variables with the 
                highest variable importance measure are retained.}
   \item{type}{ a character string that indicates the type of plot. Must be one of the
@@ -26,11 +26,11 @@
   \item{sort}{ a logical that specifies whether the predictors should be ranked according 
                to the importance measures.}
   \item{interval}{ a character string that indicates if, and which type of intervals
-                   should be added to the plot. Must be one of the following: "no", 
-                   "quantile", or "sd" (see Details).}
+                   should be added to the plot. Must be one of the following: \code{"no"}, 
+                   \code{"quantile"}, or \code{"sd"} (see Details).}
   \item{intervalProbs}{ a numerical vector of the form c(bottom, top), specifying 
                         the two quantiles that should be used for the interval. 
-                        Only meaninful when \code{interval = "quantile"}.}
+                        Only meaningful when \code{interval = "quantile"}.}
   \item{intervalColor}{ a color code or name, see \code{\link{par}}. }
   \item{horizontal}{ a logical that specifies whether the plot should be horizontal 
                      (= importance values on the x-axis. The default is \code{FALSE}. }
@@ -49,9 +49,9 @@
 }
 \details{
 
-  \code{plot} gives visalisation of the variable importance values. \code{print} prints the importance values, or their (reversed) rankins if \code{ranks = TRUE}. \code{ranks} returns the reversed rankings of the variable importance values. The \code{subset} method for VarImp objects returns a VarImp object for only a subset of the original predictors in the random forest.
+  \code{plot} gives visualization of the variable importance values. \code{print} prints the importance values, or their (reversed) rankings if \code{ranks = TRUE}. \code{ranks} returns the reversed rankings of the variable importance values. The \code{subset} method for VarImp objects returns a VarImp object for only a subset of the original predictors in the random forest.
   
-  In \code{plot}, the \code{type = "bar"} results in a barplot, \code{type = "dot"} in a point-plot, \code{type = "rank"} in a point-plot with the importance rankings as the plotting 'characters', see \code{\link{ranks}}. In each of these three options an interval (based on either two quantiles or on the standard deviation of the \code{perTree} values) can be added to the plot. \code{type = "box"} results in boxplots, and is only meaningfull when \code{perTree} values are available.
+  In \code{plot}, the \code{type = "bar"} results in a barplot, \code{type = "dot"} in a point-plot, \code{type = "rank"} in a point-plot with the importance rankings as the plotting 'characters', see \code{\link{ranks}}. In each of these three options an interval (based on either two quantiles or on the standard deviation of the \code{perTree} values) can be added to the plot. \code{type = "box"} results in boxplots, and is only meaningful when \code{perTree} values are available.
 }
 \seealso{\code{\link{VarImp}}
 }

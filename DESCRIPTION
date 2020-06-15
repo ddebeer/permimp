@@ -1,8 +1,8 @@
 Package: permimp
 Type: Package
 Title: Conditional Permutation Importance
-Version: 0.1-02
-Date: 2020-06-08
+Version: 0.2-00
+Date: 2020-06-12
 Authors@R: c(person(given = "Dries", family = "Debeer", role = c("aut", "cre"), email = "debeer.dries@gmail.com"),
 			 person(given = "Torsten", family = "Hothorn", role = "aut"),
 			 person(given = "Carolin", family = "Strobl", role = "aut"))
@@ -11,11 +11,12 @@ Author: Dries Debeer [aut, cre],
         Carolin Strobl [aut]
 Maintainer: Dries Debeer <debeer.dries@gmail.com>
 Description: An add-on to the 'party' package, with a faster implementation 
-   of the partial-conditional permutation importance for 'cforest'. The 
+   of the partial-conditional permutation importance for random forests. The 
    standard permutation importance is implemented exactly the same as in 
    the 'party' package. The conditional permutation importance can be 
    computed faster, with an option to be backward compatible to the 'party' 
-   implementation. 
+   implementation. The package is compatible with random forests fit using the 
+   'party' and the 'randomForest' package.
 Depends: R (>= 3.6.0)
 Imports: graphics,
          grDevices,
