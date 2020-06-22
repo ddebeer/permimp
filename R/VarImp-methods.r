@@ -36,6 +36,9 @@ plot.VarImp <- function(x, nVar = length(x$values),
                         col = NULL, pch = NULL,
                         main = NULL, margin = NULL, ...)
 {
+  opar <- par(no.readonly =TRUE)
+  on.exit(par(opar))
+  
   # do matching and checking 
   stopifnot(nVar > 1)
   type <- match.arg(type)
