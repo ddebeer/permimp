@@ -63,23 +63,28 @@ selectError <- function(type, AUC = FALSE)
     warning("AUC = TRUE works only for binary y\n classification; error rate is used instead of AUC")
   if (AUC && type == "nominal2")
     return(function(x, oob, y) {
-      xoob <- sapply(x, function(x) x[1])[oob]
-      yoob <- y[oob]
-      which1 <- which(yoob==levels(y)[1])
-      noob1 <- length(which1)
-      noob <- length(yoob)
-      if (noob1==0|noob1==noob) { return(NA) }       # AUC cannot be computed if all OOB-observations are from one class
-      return(1-sum(kronecker(xoob[which1] , xoob[-which1],">"))/(noob1*(length(yoob)-noob1)))       # calculate AUC
-    })
+      # x is a list with as elements a vector with two probabilities corresponding
+      #   to the two levels of the binary outcome 
+      #   the levels are here referred to as 1 and 2
+      noob <- sum(oob)                              # number of OOB values
+      xoob_p1 <- sapply(x, function(x) x[1])[oob]   # predicted probabilities for first level
+      yis1 <- y[oob] == levels(y)[1]                  # logical: oob observations == first level
+      nyis1 <- sum(yis1)                            # number of first level oob observations
+      if (nyis1 == 0 | nyis1 == noob) { return(NA) }       # AUC cannot be computed if all OOB-observations are from one class
+      # calculate AUC:
+      AUC <- (sum(rank(xoob_p1)[yis1]) - nyis1 * (nyis1 + 1) / 2) / (nyis1 * (noob - nyis1))
+      return(1 - AUC)      # 1 - AUC
+    }
+    )
   if (type == "survival") 
     return(function(x, oob, y) ipred::sbrier(y[oob, , drop = FALSE], x[oob]))
-  else if (type %in% c("nominal2", "nominal"))
+  if (type %in% c("nominal2", "nominal"))
     return(function(x, oob, y) mean((levels(y)[sapply(x, which.max)] != y)[oob]))
-  else if (type == "ordinal")
+  if (type == "ordinal")
     return(function(x, oob, y) mean((sapply(x, which.max) != y)[oob]))
-  else if (type == "regression")
+  if (type == "regression")
     return(function(x, oob, y) mean((unlist(x) - y)[oob]^2))
-  else if (type == "classification")
+  if (type == "classification")
     return(function(x, oob, y) mean((levels(y)[x] != y)[oob]))
 }
 
@@ -114,18 +119,34 @@ selectError <- function(type, AUC = FALSE)
 
 
 ## Function to select the observed variance function.
-selectNullError <- function(type)
+selectNullError <- function(type, AUC = FALSE)
 {
+  ## when AUC = TRUE
+  if (AUC && !type == "nominal2")
+    warning("AUC = TRUE works only for binary y\n classification; error rate is used instead of AUC")
+  if (AUC && type == "nominal2")
+    return(function(y, oob){ 
+      # x is a list with as elements a vector with two probabilities corresponding
+      #   to the two levels of the binary outcome 
+      #   the levels are here referred to as 1 and 2
+      noob <- sum(oob)                              # number of OOB values
+      yis1 <- y[oob] == levels(y)[1]             # logical: oob observations == first level
+      nyis1 <- sum(yis1)                            # number of first level oob observations
+      xoob_p1 <-  rep(nyis1/noob, noob)             # predicted probabilities for first level
+      if (nyis1 == 0 | nyis1 == noob) { return(NA) }       # AUC cannot be computed if all OOB-observations are from one class
+      AUC <- (sum(rank(xoob_p1)[yis1]) - nyis1 * (nyis1 + 1) / 2) / (nyis1 * (noob - nyis1))
+      return(1 - AUC)      # 1 - AUC
+      })
   if (type == "survival") 
     return(function(y, oob) NULL)
-  else if (type %in% c("nominal2", "nominal", "classification"))
+  if (type %in% c("nominal2", "nominal", "classification"))
     return(function(y, oob) mean(y[oob] != Mode(y[oob])))
-  else if (type == "ordinal")
+  if (type == "ordinal")
     return(function(y, oob) {
       y <- as.factor(y)
       mean(y[oob] != Mode(y[oob]))
       })
-  else if (type == "regression")
+  if (type == "regression")
     return(function(y, oob) mean((y[oob] - mean(y[oob]))^2))
 }
 

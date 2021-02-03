@@ -1,7 +1,7 @@
 Package: permimp
 Type: Package
 Title: Conditional Permutation Importance
-Version: 1.0-0
+Version: 1.0-1
 Date: 2020-06-12
 Authors@R: c(person(given = "Dries", family = "Debeer", role = c("aut", "cre"), email = "debeer.dries@gmail.com"),
 			 person(given = "Torsten", family = "Hothorn", role = "aut"),

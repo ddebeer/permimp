@@ -39,7 +39,7 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
   
   # Check outcome and selet the relevant error- and pred-functions
   type <- getOutcomeType(object)
-  error <- selectError(type)
+  error <- selectError(type, AUC)
   nullError <- selectNullError(type)
   pred <- selectPred(object, type, w, inp, y)
   
