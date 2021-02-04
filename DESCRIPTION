@@ -18,7 +18,7 @@ Description: An add-on to the 'party' package, with a faster implementation
    implementation. The package is compatible with random forests fit using the 
    'party' and the 'randomForest' package. The methods are described in
    Strobl et al. (2007) <doi:10.1186/1471-2105-8-25> and 
-   Debeer and Strobl (2020).
+   Debeer and Strobl (2020) <doi:10.1186/s12859-020-03622-2>.
 Depends: R (>= 3.6.0)
 Imports: graphics,
          grDevices,
