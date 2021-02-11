@@ -13,6 +13,7 @@ This is a new version after a bugfix
 * OS X (on travis-ci), release
 * linux xenial (on travis-ci), oldrel, release, devel
 * windows (on AppVeyor), release
+* windows (on win-builder.r-project.org), devel
 
 
 ## R CMD check results
