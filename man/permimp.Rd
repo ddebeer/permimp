@@ -93,7 +93,7 @@ permimp(object, ...)
   (with 1 - p-value greater than \code{threshold}) to the variable of interest. 
   The \code{threshold} can be interpreted as a parameter that moves the permutation 
   importance across a dimension from fully conditional (\code{threshold = 0}) to
-  completely unconditional (\code{threshold = 1}), see (ADD REFERENCE TO PAPER). 
+  completely unconditional (\code{threshold = 1}), see Debeer and Strobl (2020). 
   
   Using the \code{wichxnames} argument, the computation of the permutation importance
   can be limited to a smaller number of specified predictors. Note, however, that when
@@ -130,6 +130,10 @@ permimp(object, ...)
     Achim Zeileis (2008). Conditional Variable Importance for Random Forests. 
     \emph{BMC Bioinformatics}, \bold{9}, 307. 
     \url{http://www.biomedcentral.com/1471-2105/9/307}
+    
+    Debeer Dries and Carolin Strobl (2020). Conditional Permutation Importance 
+    Revisited. \emph{BMC Bioinformatics}, \bold{21}, 307. 
+    \url{https://rdcu.be/b5CrH}
 }
 \seealso{\code{\link{varimp}}, \code{\link{VarImp}}
 }
