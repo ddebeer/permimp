@@ -5,7 +5,7 @@ author:
   affiliation: University of Zurich
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{The permimp-package}
   \usepackage[UTF-8]{inputenc}
 abstract: The `permimp`-package is developed to replace the Conditional Permutation Importance (CPI) computation by the `varimp`-function(s) of the `party`-package. `permimp` applies a different implementation for the CPI, in order to mitigate some issues related to the implementation of the CPI in the `party`-package. In addition, the CPI is also available for random forests grown by the `randomForest`-package. Finally, the package includes some plotting options.   
