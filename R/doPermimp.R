@@ -1,4 +1,4 @@
-## doPermimp is the workinghorse of the permimp methods. 
+## doPermimp is the working horse of the permimp methods. 
 ## is called by all the permimp methods.
 
 doPermimp <- function(object, input, inp, y, OOB, threshold, conditional, 
@@ -6,7 +6,7 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
                       progressBar, thresholdDiagnostics, 
                       w, AUC, pre1.0_0, mincriterion, asParty)
 {
-  # Check if conditional permuation importance is possible
+  # Check if conditional permutation importance is possible
   if (conditional) {
     if(!all(complete.cases(input)))
       stop("cannot compute variable importance measure with missing values")
@@ -60,7 +60,7 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
   changeThres <- array(NA, dim = c(ntree, length(xnames), nperm), 
                        dimnames = list(NULL, xnames, NULL))
   
-  # start progressbar
+  # start progress bar
   if(progressBar) pBar <- txtProgressBar(min = 0, max = ntree, 
                                          style = 3, char = "|")
   
@@ -107,7 +107,7 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
             else varsToCondOn <- cond_list[[as.character(j)]]
             
             if(length(varsToCondOn) < 1){
-              ## If there are no variables to condition on, conditionally permution is impossible.
+              ## If there are no variables to condition on, conditionally permuting is impossible.
               ## -1 corresponds to a suggestion to decrease the used threshold
               changeThres[treeNr, j, per] <- -1  
               perm <- sample(which(oob))
@@ -120,12 +120,12 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
             perm <- sample(which(oob))
           }
           if(is.null(perm)) {
-            ## if conditionally permution cannot result in different outcomes: 
-            ## (a) +1 correstponds to a suggestion to increase the threshold; (treeNr) jump to next varInTree
+            ## if conditionally permuting cannot result in different outcomes: 
+            ## (a) +1 corresponds to a suggestion to increase the threshold; (treeNr) jump to next varInTree
             changeThres[treeNr, j, per] <- 1
             break}
           
-          ## replace premuted observations for predictor j
+          ## replace permuted observations for predictor j
           tmp <- replacePermVar(input, inp, permVarNr = j, oob, perm)
           p <- pred(tree, tmp, mincriterion, -1L, input = tmp)
         }
