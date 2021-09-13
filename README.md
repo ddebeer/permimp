@@ -1,6 +1,6 @@
 <!-- badges: start -->
   [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ddebeer/permimp?branch=master&svg=true)](https://ci.appveyor.com/project/ddebeer/permimp)
-  [![Build Status](https://travis-ci.org/ddebeer/permimp.svg?branch=master)](https://travis-ci.org/ddebeer/permimp) [![codecov](https://codecov.io/gh/ddebeer/permimp/branch/master/graph/badge.svg)](https://codecov.io/gh/ddebeer/permimp)
+  [![Build Status](https://app.travis-ci.com/ddebeer/permimp.svg?branch=master)](https://app.travis-ci.com/ddebeer/permimp) [![codecov](https://codecov.io/gh/ddebeer/permimp/branch/master/graph/badge.svg)](https://codecov.io/gh/ddebeer/permimp)
   <!-- badges: end -->
 
 ### (Conditional) Permutation Importance for Random Forests. 
