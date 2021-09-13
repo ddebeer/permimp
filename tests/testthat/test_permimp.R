@@ -24,9 +24,10 @@ rfAirq5 <- randomForest(Ozone ~ ., data = airq, maxnodes = 5,
                         keep.forest = TRUE, keep.inbag = TRUE)
 
 
-permimp_cf <- permimp(cfAirq5, conditional = TRUE)
+permimp_cf <- permimp(cfAirq5, conditional = TRUE, progressBar = FALSE)
 permimp_rf <- permimp(rfAirq5, conditional = TRUE, do_check = FALSE, 
-                      whichxnames = c("Solar.R", "Wind", "Temp", "Month"))
+                      whichxnames = c("Solar.R", "Wind", "Temp", "Month"),
+                      progressBar = FALSE)
 
 
 ### Varimp object
@@ -39,8 +40,8 @@ test_that("permimp result is a VarImp object", {
 
 ### ranks function
 test_that("ranks works properly", {
-  expect_is(ranks(permimp_cf), "numeric")
-  expect_identical(ranks(permimp_cf), ranks(permimp_cf$values))
+  expect_is(ranks(permimp_cf, note = FALSE), "numeric")
+  expect_identical(ranks(permimp_cf, note = FALSE), ranks(permimp_cf$values, note = FALSE))
 })
 
 
@@ -48,7 +49,8 @@ test_that("ranks works properly", {
 test_that("permimp asParty is equal to varimp", {
   ### get CPI using permip
   set.seed(542863)
-  permimp_asParty <- permimp(cfAirq5, conditional = TRUE, asParty = TRUE)
+  permimp_asParty <- permimp(cfAirq5, conditional = TRUE, asParty = TRUE,
+                             progressBar = FALSE)
   
   ### get CPI using varimp
   set.seed(542863)
@@ -101,26 +103,30 @@ test_that("permimp returns errors and warnings", {
     randomForest(as.factor(Month) ~ ., data = airq, maxnodes = 5,
                  mtry = 3, ntree = 3, importance = TRUE,
                  classwt = c(1:5), keep.forest = TRUE, keep.inbag = TRUE),
-    do_check = FALSE))
+    do_check = FALSE, 
+    progressBar = FALSE))
   
   expect_warning(permimp(
     randomForest(factor(Ozone < 31) ~ ., data = airq[,-5], maxnodes = 5, 
                  strata = factor(airq$Month), sampsize = rep(5, 5),
                  mtry = 3, ntree = 3, importance = TRUE,
                  keep.forest = TRUE, keep.inbag = TRUE),
-    do_check = FALSE))
+    do_check = FALSE, 
+    progressBar = FALSE))
   
   expect_error(permimp(
     randomForest(factor(Ozone < 31) ~ ., data = airq[,-5], maxnodes = 5, 
                  mtry = 3, ntree = 3, importance = TRUE),
-    do_check = FALSE))
+    do_check = FALSE, 
+    progressBar = FALSE))
 })
 
 ### unconditional permimp
 test_that("unconditional permimp is the same as unconditional varimp", {
   ### get CPI using permip
   set.seed(542863)
-  permimp <- permimp(cfAirq5)
+  permimp <- permimp(cfAirq5, 
+                     progressBar = FALSE)
   
   ### get CPI using varimp
   set.seed(542863)
@@ -128,13 +134,14 @@ test_that("unconditional permimp is the same as unconditional varimp", {
   expect_equal(varimp, permimp$values)
   expect_equal(varimp, print(permimp))
   
-  ### get CPI using permip
+  ### get CPI using permimp
   permimp <- permimp(
     cforest(factor(Ozone > 31) ~ ., data = airq,
-            control = cforest_unbiased(mtry = 3, ntree = 2,
+            control = cforest_unbiased(mtry = 3, ntree = 5,
                                        minbucket = 5, 
                                        minsplit = 10)), 
-    AUC = TRUE, pre1.0_0 = TRUE)
+    AUC = TRUE, pre1.0_0 = TRUE, 
+    progressBar = FALSE)
   expect_is(permimp, "VarImp")
   
   
@@ -142,22 +149,35 @@ test_that("unconditional permimp is the same as unconditional varimp", {
   airq <- subset(airquality, !(is.na(Ozone) | is.na(Solar.R)))
   airq$test <- with(airq, Surv(Ozone, floor((Wind - 1) / 10)))
   
+  set.seed(54283)
   cf_surv <- cforest(test ~ ., data = airq,
-                     control = cforest_unbiased(mtry = 3, ntree = 2,
+                     control = cforest_unbiased(mtry = 3, ntree = 5,
                                                 minbucket = 5, 
                                                 minsplit = 10))
   
-  set.seed(1)
-  varimp <- varimp(cf_surv)
-  set.seed(1)
-  permimp <- permimp(cf_surv)
-  expect_equal(varimp, permimp$values)
   
-  set.seed(1)
-  varimp <- varimp(cf_surv, conditional = TRUE)
-  set.seed(1)
-  permimp <- permimp(cf_surv, conditional = TRUE, asParty = TRUE)
-  expect_equal(varimp, permimp$values)
+  set.seed(54283)
+  varimp_s <- varimp(cf_surv)
+  
+  set.seed(54283)
+  varimp_s <- varimp(cf_surv)
+  
+  set.seed(54283)
+  permimp_s <- permimp(cf_surv, 
+                       progressBar = FALSE)
+
+  
+  set.seed(542863)
+  varimp_sc <- varimp(cf_surv, conditional = TRUE)
+  set.seed(542863)
+  permimp_sc <- permimp(cf_surv, conditional = TRUE, asParty = TRUE, 
+                        progressBar = FALSE)
+
+
+  expect_equal(varimp_s, permimp_s$values)
+  
+
+  expect_equal(varimp_sc, permimp_sc$values)
   
 })
 
