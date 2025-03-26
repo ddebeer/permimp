@@ -1,9 +1,9 @@
 ## permimp for cforest: permimp.cforest.R
 permimp.RandomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                                   conditional = FALSE, threshold = .95, whichxnames = NULL,   
-                                  thresholdDiagnostics = FALSE, progressBar = TRUE, 
+                                  thresholdDiagnostics = FALSE, progressBar = interactive(), 
                                   pre1.0_0 = conditional, AUC = FALSE, asParty = FALSE, 
-                                  mincriterion = 0, ...)
+                                  mincriterion = 0, cl = NULL, ...)
 {
   # select input and responses (y)
   input <- object@data@get("input")
@@ -29,7 +29,7 @@ permimp.RandomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                    y, OOB, threshold, conditional, 
                    whichxnames, ntree = length(object@ensemble), nperm, scaled,
                    progressBar, thresholdDiagnostics, 
-                   w, AUC, pre1.0_0, mincriterion, asParty)
+                   w, AUC, pre1.0_0, mincriterion, asParty, cl, ...)
   
   return(out)
   

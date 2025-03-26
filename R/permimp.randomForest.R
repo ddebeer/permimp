@@ -1,8 +1,8 @@
 ## permimp for randomForest: permimp.randomForest.R
 permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                                   conditional = FALSE, threshold = .95, whichxnames = NULL,   
-                                  thresholdDiagnostics = FALSE, progressBar = TRUE, 
-                                  do_check = TRUE, ...)
+                                  thresholdDiagnostics = FALSE, progressBar = interactive(), 
+                                  do_check = TRUE, cl = NULL, ...)
 {
   # get randomForest call
   rfCall <- match.call(randomForest, object$call, expand.dots = TRUE)
@@ -11,7 +11,7 @@ permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
   if(any(is.null(rfCall$keep.forest), is.null(rfCall$keep.inbag), 
      rfCall$keep.forest == FALSE, rfCall$keep.inbag == FALSE)) {
     if(do_check){
-      if(menu(c("Yes", "No"), title = paste0("The ", sQuote("permimp"), " computations require forest and inbag information. \n", "A new random forest needs to be fit with ", sQuote("keep.forest = TRUE"), " and ", sQuote("keep.inbag = TRUE"), ". \n", "Due to random variation, the new and original forest are not identical. \n \n", "Should a new random forest be fitted?")) != 1)
+      if(menu(c("Yes", "No, cancel the 'permimp' computations"), title = paste0("The ", sQuote("permimp"), " computations require forest and inbag information. \n", "A new random forest needs to be fit with ", sQuote("keep.forest = TRUE"), " and ", sQuote("keep.inbag = TRUE"), ". \n", "Due to random variation, the new and original forest are not identical. \n \n", "Should a new random forest be fitted?")) != 1)
         stop(sQuote("permimp"), " computations canceled.")
     } else {
       warning(sQuote("permimp"), " requires forest and inbag information. \n", "A new random forest is fit with ", sQuote("keep.forest = TRUE"), " and ", sQuote("keep.inbag = TRUE"), ". \n", "Due to random variation, the new and original forest are not identical.",
@@ -22,7 +22,7 @@ permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
   } 
   else {
     if(do_check) {
-      if(menu(c("Yes", "No"), title = paste0("The ", sQuote("permimp"), " computations depend on the data-objects that were used to fit the random Forest. \n \n", "Are you sure that the training data have NOT been changed since fitting?")) != 1)
+      if(menu(c("Yes", "No, cancel the 'permimp' computations"), title = paste0("The ", sQuote("permimp"), " computations depend on the data-objects that were used to fit the random Forest. \n \n", "Are you sure that the training data have NOT been changed since fitting?")) != 1)
       stop(sQuote("permimp"), " computations canceled.")}
   }
   
@@ -68,7 +68,7 @@ permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                    whichxnames, ntree = object$ntree, nperm, scaled,
                    progressBar, thresholdDiagnostics, 
                    w = NULL, AUC = FALSE, 
-                   pre1.0_0 = TRUE, mincriterion = NULL, asParty = FALSE)
+                   pre1.0_0 = TRUE, mincriterion = NULL, asParty = FALSE, cl, ...)
 
   return(out)
   

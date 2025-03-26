@@ -91,6 +91,11 @@ test_that("plot gives no errors", {
                       horizontal = TRUE, interval = "quantile"))
 })
 
+### test progress bar
+test_that("progress bar works", {
+  expect_silent(permimp(cfAirq5, conditional = TRUE))
+})
+
 
 ### errors, warnings and messages for permimp
 test_that("permimp returns errors and warnings", {

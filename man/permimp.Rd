@@ -20,11 +20,13 @@
 permimp(object, ...)
 \method{permimp}{randomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
-     thresholdDiagnostics = FALSE, progressBar = TRUE,  do_check = TRUE, ...)
+     thresholdDiagnostics = FALSE, progressBar = interactive(),  do_check = TRUE, 
+     cl = NULL, ...)
 \method{permimp}{RandomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
-     thresholdDiagnostics = FALSE, progressBar = TRUE, 
-     pre1.0_0 = conditional, AUC = FALSE, asParty = FALSE, mincriterion = 0, ...)
+     thresholdDiagnostics = FALSE, progressBar = interactive(), 
+     pre1.0_0 = conditional, AUC = FALSE, asParty = FALSE, mincriterion = 0, 
+     cl = NULL, ...)
 }
 \arguments{
   \item{object}{ an object as returned by \code{cforest} or \code{randomForest}.}
@@ -74,7 +76,13 @@ permimp(object, ...)
   \item{progressBar}{ a logical that determines whether a progress bar should 
                       be displayed.}
   \item{do_check}{ a logical that determines whether a check requiring user 
-                   input should be included.}                    
+                   input should be included.} 
+  \item{cl}{ A cluster object created by \code{\link{makeCluster}}, or an 
+             integer to indicate number of child-processes (integer values 
+             are ignored on Windows) for parallel evaluations (see Details 
+             on parallel computing). It can also be "future" to use a future 
+             backend (see Details), \code{NULL} (default) refers to sequential 
+             evaluation.}
   \item{...}{ additional arguments to be passed to the Methods}
 }
 \details{
@@ -100,6 +108,26 @@ permimp(object, ...)
   \code{conditional = TRUE}, the (other) predictors to condition on are also 
   limited to this selection of predictors. Only use when fully aware of the 
   implications.
+  
+  For parallel processing, the \pkg{pbapply} package, a wrapper around the \pkg{parallel} 
+  package is used. Parallel processing can be enabled through the \code{cl}
+  argument.  \code{\link{parLapply}} is called when \code{cl} is a 'cluster' 
+  object, \code{\link{mclapply}} is called when \code{cl} is an integer. 
+  
+  When doing parallel processing, other objects might need to pushed to the 
+  workers, and random numbers must be handled with care (see the Examples of the
+  \pkg{pbapply} package).
+  
+  When using parallel processing, showing the progress bar increases the 
+  communication overhead between the main process and nodes / child processes
+  compared to the parallel equivalents of the functions without the progress bar.
+  The functions fall back to their original equivalents when 
+  \code{progressBar = FALSE}. This is the default when \code{interactive()} is 
+  \code{FALSE} (i.e. called from command line R script)
+  
+  Note that when \code{cl = "future"}, you might have to specify the 
+  \code{future.seed} argument (passed as part of \code{...}) 
+  when using random numbers in parallel.
   
   For further details, please refer to the documentation of \code{\link{varimp}}.
 }
