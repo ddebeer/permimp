@@ -2,7 +2,7 @@
 permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                                   conditional = FALSE, threshold = .95, whichxnames = NULL,   
                                   thresholdDiagnostics = FALSE, progressBar = interactive(), 
-                                  do_check = TRUE, cl = NULL, ...)
+                                  do_check = TRUE, oldSeedSelection = FALSE, cl = NULL, ...)
 {
   # get randomForest call
   rfCall <- match.call(randomForest, object$call, expand.dots = TRUE)
@@ -68,7 +68,8 @@ permimp.randomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
                    whichxnames, ntree = object$ntree, nperm, scaled,
                    progressBar, thresholdDiagnostics, 
                    w = NULL, AUC = FALSE, 
-                   pre1.0_0 = TRUE, mincriterion = NULL, asParty = FALSE, cl, ...)
+                   pre1.0_0 = TRUE, mincriterion = NULL, asParty = FALSE, 
+                   oldSeedSelection, cl, ...)
 
   return(out)
   

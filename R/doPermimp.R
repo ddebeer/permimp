@@ -4,7 +4,8 @@
 doPermimp <- function(object, input, inp, y, OOB, threshold, conditional, 
                       whichxnames, ntree, nperm, scaled,
                       progressBar, thresholdDiagnostics, 
-                      w, AUC, pre1.0_0, mincriterion, asParty, cl, ...)
+                      w, AUC, pre1.0_0, mincriterion, asParty, 
+                      oldSeedSelection, cl, ...)
 {
   # progressbar?
   if(!progressBar){
@@ -62,6 +63,12 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
                                   input, seq_along(xnames), asParty = TRUE)
   } 
   
+  # seed selection
+  seeds <- NULL
+  if (!oldSeedSelection){
+    seeds <- (stats::runif(ntree) * ntree * 100000)[sample(seq_len(ntree))] 
+  }
+  
   if(inherits(cl, "SOCKcluster"))
   parallel::clusterExport(cl = cl, 
                           unclass(utils::lsf.str(envir = asNamespace("permimp"), 
@@ -69,12 +76,13 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
                           envir = as.environment(asNamespace("permimp"))
   )
   
+
   # for all trees (treeNr) in the forest
   res <- pbapply::pblapply(seq_len(ntree), doOneTree, 
                            object, OOB, y, input, inp, mincriterion, 
                            whichVarIDs, xnames, error, conditional, nullError, pred,
                            threshold, nperm, scaled, pre1.0_0, asParty, cond_list, 
-                           ..., cl = cl)
+                           oldSeedSelection, seeds, ..., cl = cl)
   
   perror <- simplify2array(lapply(res, function(resOneTree) resOneTree$perror))
   perror <- aperm(perror, c(3, 1, 2))
@@ -149,7 +157,8 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
 
 doOneTree <- function(treeNr, object, OOB, y, input, inp, mincriterion, 
                       whichVarIDs, xnames, error, conditional, nullError, pred,
-                      threshold, nperm, scaled, pre1.0_0, asParty, cond_list){
+                      threshold, nperm, scaled, pre1.0_0, asParty, cond_list, 
+                      oldSeedSelection, seeds){
   
   ## list for several permutations
   ## this array is initialized with values 0 so that a tree that does not 
@@ -163,6 +172,10 @@ doOneTree <- function(treeNr, object, OOB, y, input, inp, mincriterion,
                        dimnames = list(xnames, NULL))
 
   tree <- getTree(object, treeNr)
+  
+  if(!oldSeedSelection){
+    set.seed(seeds[treeNr])
+  }
   
   ## if OOB == TRUE use only oob observations, otherwise use all observations in learning sample
   if(OOB){oob <- getOOB(object, treeNr)} else {oob <- rep(TRUE, length(y))}

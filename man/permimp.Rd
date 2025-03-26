@@ -20,13 +20,13 @@
 permimp(object, ...)
 \method{permimp}{randomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
-     thresholdDiagnostics = FALSE, progressBar = interactive(),  do_check = TRUE, 
-     cl = NULL, ...)
+     thresholdDiagnostics = FALSE, progressBar = interactive(), do_check = TRUE, 
+     oldSeedSelection = FALSE, cl = NULL, ...)
 \method{permimp}{RandomForest}(object, nperm = 1, OOB = TRUE, scaled = FALSE,
      conditional = FALSE, threshold = .95, whichxnames = NULL,   
      thresholdDiagnostics = FALSE, progressBar = interactive(), 
      pre1.0_0 = conditional, AUC = FALSE, asParty = FALSE, mincriterion = 0, 
-     cl = NULL, ...)
+     oldSeedSelection = FALSE, cl = NULL, ...)
 }
 \arguments{
   \item{object}{ an object as returned by \code{cforest} or \code{randomForest}.}
@@ -77,6 +77,12 @@ permimp(object, ...)
                       be displayed.}
   \item{do_check}{ a logical that determines whether a check requiring user 
                    input should be included.} 
+  \item{oldSeedSelection}{ a logical that determines whether the selection of
+                           random numbers should be the same is in the 1.1
+                           version of the package. The default is \code{FALSE}, 
+                           so that seeds are generated for each tree, and the
+                           results are reproducible, also when parallel processing
+                           is used.} 
   \item{cl}{ A cluster object created by \code{\link{makeCluster}}, or an 
              integer to indicate number of child-processes (integer values 
              are ignored on Windows) for parallel evaluations (see Details 
@@ -124,10 +130,6 @@ permimp(object, ...)
   The functions fall back to their original equivalents when 
   \code{progressBar = FALSE}. This is the default when \code{interactive()} is 
   \code{FALSE} (i.e. called from command line R script)
-  
-  Note that when \code{cl = "future"}, you might have to specify the 
-  \code{future.seed} argument (passed as part of \code{...}) 
-  when using random numbers in parallel.
   
   For further details, please refer to the documentation of \code{\link{varimp}}.
 }
@@ -188,7 +190,7 @@ permimp(object, ...)
   set.seed(290875)
   party::varimp(readingSkills.cf)
   set.seed(290875)
-  permimp(readingSkills.cf)
+  permimp(readingSkills.cf, oldSeedSelection = TRUE)
   
   
   ###
@@ -225,8 +227,7 @@ permimp(object, ...)
   system.time(print(permimp(readingSkills.cf, conditional = TRUE, asParty = FALSE)))
   
   # parallel processing
-  # note that the results are different than above, despite the same random seed. 
-  # This is due a different use of random number generating in parallel package
+  # note that the results are reproducible despite using multiple cores
   cluster <- parallel::makeCluster(2)
 
   set.seed(290875)
