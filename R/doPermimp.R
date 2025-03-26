@@ -56,19 +56,25 @@ doPermimp <- function(object, input, inp, y, OOB, threshold, conditional,
   pred <- selectPred(object, type, w, inp, y)
   
   # when asParty == TRUE, collect cond list first
+  cond_list <- NULL
   if (conditional && asParty) {
     cond_list <- create_cond_list(binnedVars = NULL, threshold,
                                   input, seq_along(xnames), asParty = TRUE)
-  }
+  } 
   
+  if(inherits(cl, "SOCKcluster"))
+  parallel::clusterExport(cl = cl, 
+                          unclass(utils::lsf.str(envir = asNamespace("permimp"), 
+                                          all = T)),
+                          envir = as.environment(asNamespace("permimp"))
+  )
   
   # for all trees (treeNr) in the forest
-  res <- pbapply::pblapply(seq_len(ntree), function(treeNr){
-    doOneTree(treeNr, object, OOB, y, input, inp, mincriterion, 
-                            whichVarIDs, xnames, error, conditional, nullError, pred,
-                            threshold, nperm, scaled, pre1.0_0, asParty, cond_list)
-    
-  }, ..., cl = cl)
+  res <- pbapply::pblapply(seq_len(ntree), doOneTree, 
+                           object, OOB, y, input, inp, mincriterion, 
+                           whichVarIDs, xnames, error, conditional, nullError, pred,
+                           threshold, nperm, scaled, pre1.0_0, asParty, cond_list, 
+                           ..., cl = cl)
   
   perror <- simplify2array(lapply(res, function(resOneTree) resOneTree$perror))
   perror <- aperm(perror, c(3, 1, 2))

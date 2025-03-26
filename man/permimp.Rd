@@ -209,6 +209,30 @@ permimp(object, ...)
   set.seed(290875)
   permimp(readingSkills.rf, conditional = TRUE, threshold = .8, do_check = FALSE)
                               
+  \dontrun{
+  ### Parallel processing - Windows
+  # Only relevant for large trees, for small trees, there may not even be a 
+  # 'speed up', but a 'slow down'
   
+  # Make a larger forest
+  set.seed(290875)
+  readingSkills.cf <- party::cforest(score ~ ., data = party::readingSkills, 
+                                     control = party::cforest_unbiased(mtry = 2, 
+                                                                       ntree = 200))
+  
+  # sequentiall processing
+  set.seed(290875)
+  system.time(print(permimp(readingSkills.cf, conditional = TRUE, asParty = FALSE)))
+  
+  # parallel processing
+  # note that the results are different than above, despite the same random seed. 
+  # This is due a different use of random number generating in parallel package
+  cluster <- parallel::makeCluster(2)
+
+  set.seed(290875)
+  system.time(print(permimp(readingSkills.cf, conditional = TRUE, 
+                            asParty = FALSE, cl = cluster, progressBar = FALSE)))
+  parallel::stopCluster(cluster)
+  }
 }
 \keyword{tree}
