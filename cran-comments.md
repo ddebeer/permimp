@@ -7,8 +7,11 @@ The issue with the test that resulted in an error on various platforms was solve
 
 
 ## Test environments
-* local windows x86_64-w64-mingw32, R 4.1.1
+* local windows x86_64-w64-mingw32/x64, R 4.4.2
 * OS X (on travis-ci), release
+* windows via windbuilder, R4.4.3 alpha
+* windows via windbuilder, R4.5.0 alpha
+
 * linux xenial (on travis-ci), oldrel, release, devel
 * windows (on AppVeyor), release
 * Oracle Solaris 10, x86, 32 bit, R-release (via Rhub)
