@@ -11,9 +11,9 @@
     importance is implemented differently, selecting the predictions to condition 
     on in each tree using Pearson Chi-squared tests applied to the 
     by-split point-categorized predictors. In general the new implementation has
-    similar results as the original \code{\link{varimp}} function. With 
+    similar results as the original \code{\link[party:varimp]{varimp}} function. With 
     \code{asParty = TRUE}, the partial/conditional permutation importance is 
-    fully backward-compatible but faster than the original \code{\link{varimp}}
+    fully backward-compatible but faster than the original \code{\link[party:varimp]{varimp}}
     function in \pkg{party}.
 }
 \usage{ 
@@ -64,7 +64,7 @@ permimp(object, ...)
 			  importance is more robust towards class imbalance, but it is 
 			  only applicable to binary classification.}
   \item{asParty}{ a logical that determines whether or not exactly the same 
-                  values as the original \code{\link{varimp}} function in 
+                  values as the original \code{\link[party:varimp]{varimp}} function in 
 				  \pkg{party} should be obtained.}
   \item{whichxnames}{ a character vector containing the predictor variable 
                       names for which the permutation importance should be 
@@ -86,21 +86,20 @@ permimp(object, ...)
   \item{cl}{ A cluster object created by \code{\link{makeCluster}}, or an 
              integer to indicate number of child-processes (integer values 
              are ignored on Windows) for parallel evaluations (see Details 
-             on parallel computing). It can also be "future" to use a future 
-             backend (see Details), \code{NULL} (default) refers to sequential 
+             on parallel computing). \code{NULL} (default) refers to sequential 
              evaluation.}
   \item{...}{ additional arguments to be passed to the Methods}
 }
 \details{
 
-  Function \code{permimp} is highly comparable to \code{\link{varimp}} in \pkg{party},
+  Function \code{permimp} is highly comparable to \code{\link[party:varimp]{varimp}} in \pkg{party},
   but the partial/conditional variable importance has a different, more efficient
-  implementation. Compared to the original \code{\link{varimp}} in \pkg{party}, 
+  implementation. Compared to the original \code{\link[party:varimp]{varimp}} in \pkg{party}, 
   \code{permimp} applies a different strategy to select the predictors to condition 
   on (ADD REFERENCE TO PAPER). 
   
   With \code{asParty = TRUE}, permimp returns exactly the same values as 
-  \code{\link{varimp}} in \pkg{party}, but the computation is done more efficiently.
+  \code{\link[party:varimp]{varimp}} in \pkg{party}, but the computation is done more efficiently.
   
   If \code{conditional = TRUE}, the importance of each variable is computed by
   permuting within a grid defined by the predictors that are associated  
@@ -131,10 +130,10 @@ permimp(object, ...)
   \code{progressBar = FALSE}. This is the default when \code{interactive()} is 
   \code{FALSE} (i.e. called from command line R script)
   
-  For further details, please refer to the documentation of \code{\link{varimp}}.
+  For further details, please refer to the documentation of \code{\link[party:varimp]{varimp}}.
 }
 \value{
-    An object of class \code{\link{VarImp}}, with the mean decrease in accuracy 
+    An object of class \code{\link[party:varimp]{varimp}}, with the mean decrease in accuracy 
     as its \code{$values}. 
 }
 \references{ 
@@ -165,7 +164,7 @@ permimp(object, ...)
     Revisited. \emph{BMC Bioinformatics}, \bold{21}, 307. 
     \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03622-2}
 }
-\seealso{\code{\link{varimp}}, \code{\link{VarImp}}
+\seealso{\code{\link[party:varimp]{varimp}}, \code{\link{VarImp}}
 }
 \examples{
   

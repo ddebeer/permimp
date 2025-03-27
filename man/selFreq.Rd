@@ -3,14 +3,14 @@
 \title{ Predictor Selection Frequency in Random Forests }
 \description{
     counts how many times each predictor variable was selected for splitting
-    in a random forest. Only implemented for \code{\link{cforest}} form the \pkg{party}
+    in a random forest. Only implemented for \code{\link[party:cforest]{cforest}} form the \pkg{party}
     package.
 }
 \usage{ 
 selFreq(object, whichxnames = NULL)
 }
 \arguments{
-  \item{object}{ an object as returned by \code{cforest}.}
+  \item{object}{ an object as returned by \code{\link[party:cforest]{cforest}}.}
   \item{whichxnames}{ a character vector containing the predictor variable names that for 
                   which the permutation importance should be computed. See section 'Details'.} 
 }
