@@ -62,7 +62,7 @@ CPI_varimp
 
 Three differences can easily be spotted:
 
-* `perminp` has a `progressBar`-argument. The default is `progressBar = TRUE`^[`progressBar = FALSE` was used, because a progress bar is not represented well using R markdown.]
+* `permimp` has a `progressBar`-argument. The default is `progressBar = interactive()`^[`progressBar = FALSE` was used, because a progress bar is not represented well using R markdown.]
 * `permimp` is faster than `varimp`.
 * The results are different.
 
@@ -71,7 +71,9 @@ Three differences can easily be spotted:
 
 Why are the results different?
 
-There are two main reasons. First, `permimp` uses a different default `threshold`-value:  `permimp` uses `threshold = .95` while `varimp` uses `threshold = 0.2`. Check `?permimp` and `?varimp`. There is a good reason for using a higher default threshold value. 
+There are two main reasons. 
+
+First, `permimp` uses a different default `threshold`-value:  `permimp` uses `threshold = .95` while `varimp` uses `threshold = 0.2`. Check `?permimp` and `?varimp`. There is a good reason for using a higher default threshold value. 
 
 When using equal `threshold`-values...  
 
@@ -144,12 +146,14 @@ PI_varimp
 
 ## Splitwise Unconditional Permutation Importance
 set.seed(542863)
-PI_permimp2 <- permimp(cfAirq50, progressBar = FALSE)
+PI_permimp2 <- permimp(cfAirq50, progressBar = FALSE, oldSeedSelection = TRUE)
 set.seed(542863)
 PI_varimp2 <- varimp(cfAirq50)
 PI_permimp2
 PI_varimp2
 ```
+
+Note that the argument `oldSeedSelection = TRUE` was added when using `permimp`. Since the release of version 1.1-0, the way random seeds are used has been changed. Choosing `oldSeedSelection = TRUE` makes the computations backward compatible with older releases. However, when using parallel processing the old selection of random seeds holds problems for reproducible results. Hence, it is recommend to use the default `oldSeedSelection = FALSE`, especially when using parallel processing. 
 
 For more detailed information check `?permimp`.
 
@@ -167,7 +171,7 @@ Visualizing the variable importance values (as a `VarImp`-object) is easy using 
 
 We would suggest to only use the visualization of the `$perTree` importance value distribution, when there are enough trees (>= 500) in the random forest. Therefore, we first fit a new, bigger random forest, and compute the permutation importance.
 
-```{r eval = TRUE, echo = TRUE} 
+```{r barplot, eval = TRUE, echo = TRUE, fig.alt = "Barplot of Permutation Importance values."} 
 ## fit a new forest with 500 trees
 set.seed(542863)
 cfAirq500 <- cforest(Ozone ~ ., data = airq,
@@ -181,23 +185,32 @@ PI_permimp500 <- permimp(cfAirq500, progressBar = FALSE)
 ## different plots, all easy to make
 ## barplot
 plot(PI_permimp500, type = "bar")
+```
 
+
+```{r barplot-quantiles,  eval = TRUE, echo = TRUE, fig.alt = "Barplot of Permutation Importance values with quantile interval."} 
 ## barplot with visualization of the distribution: an
 ## interval between the .25 and .75 quantiles of the per 
 ## Tree values is added to the plot
 plot(PI_permimp500, type = "bar", interval = "quantile")
+```
 
+
+```{r barplot-horizontal,  eval = TRUE, echo = TRUE, fig.alt = "Horizontal barplot of Permutation Importance values."} 
 ## horizontal boxplot
 plot(PI_permimp500, type = "box", horizontal = TRUE)
+```
 
-## unsorted dotplot
+
+```{r dotplot unsorted,  eval = TRUE, echo = TRUE, fig.alt = "Unsorted dotplot of Permutation Importance values."} 
+## unsorted-dotplot
 plot(PI_permimp500, type = "dot", sort = FALSE, 
      interval = "quantile")
 ```
 
 ##### Additionally you can:
 
-* Use your favorite colors with arguments `col` and `intervaColor`.
+* Use your favorite colors with arguments `col` and `intervalColor`.
 * Use different a quantile interval with `intervalProbs = c(<lower_quantile>, <upper_quantile>)`.^[Only when `interval = "quantile"`, which is the default.]
 * Choose your own title the title with `main`
 * Modify the margin with `margin`. 
@@ -205,7 +218,7 @@ plot(PI_permimp500, type = "dot", sort = FALSE,
 #### Although we would advise against this in most situations, you can also:
 
 * Plot only the `<integer value>` predictors with the highest values with `nVar = <integer value>`.  
-* Visualize the distribution using the standard deviation of the `perTree` values with `interval = "sd"`. This is almost always a very bad idea, because it falsely suggests that the distribution is symmetric. Please don't use this option.
+* Visualize the distribution using the standard deviation of the `perTree` values with `interval = "sd"`. This is almost always a bad idea, because it falsely suggests that the distribution is symmetric. Please don't use this option.
 
 For more detailed information check `?plot.VarImp`.
 
@@ -240,15 +253,17 @@ rfAirq50 <- randomForest(Ozone ~ ., data = airq, mtry = 2, replace = FALSE,
 Note that `keep.forest = TRUE` and `keep.inbag = TRUE`. The `permimp`-function requires information about which observations were in-bag (IB) or out-of-bag (OOB), as well as information about the split points in each tree. Without this information, the (Conditional) Permutation Importance algorithm cannot be executed.
 
 
-```{r, eval = TRUE, echo = FALSE}
-CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE, do_check = FALSE)
-plot(CPI_permimpRF, horizontal = TRUE)
-```
 
 ```{r, eval = FALSE, echo = TRUE}
 CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE)
 plot(CPI_permimpRF, horizontal = TRUE)
 ```
+
+```{r randomforest, eval = TRUE, echo = FALSE, fig.alt = "Barplot of Conditional Permutation Importance values for a Random Forest by the RandomForest-package."}
+CPI_permimpRF <- permimp(rfAirq50, conditional = TRUE, progressBar = FALSE, do_check = FALSE)
+plot(CPI_permimpRF, horizontal = TRUE)
+```
+
 
 When calling `permimp` for a `randomForest` object form the `randomForest`-package, a menu is prompted that ask whether you are sure that the data-objects used to fit the random forest have not changed. This is because the `permimp` computations rely on those data-objects, and automatically search for them in the environment. If these data-objects have changed, the `permimp` results can be distorted. 
 

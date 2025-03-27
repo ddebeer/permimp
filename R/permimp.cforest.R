@@ -28,6 +28,10 @@ permimp.RandomForest <- function (object, nperm = 1, OOB = TRUE, scaled = FALSE,
   if (asParty)
     oldSeedSelection <- TRUE
   
+  # if pre1.0_0 == TRUE, use old seed selection
+  if (pre1.0_0)
+    oldSeedSelection <- TRUE
+  
   out <- doPermimp(object, input, 
                    inp = party::initVariableFrame(input, trafo = NULL),
                    y, OOB, threshold, conditional, 

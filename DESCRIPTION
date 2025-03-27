@@ -36,3 +36,4 @@ Suggests: knitr,
           testthat
 License: GPL-2 | GPL-3
 VignetteBuilder: knitr
+URL: https://ddebeer.github.io/permimp/
