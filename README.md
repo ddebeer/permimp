@@ -1,7 +1,5 @@
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/permimp)](https://CRAN.R-project.org/package=permimp)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ddebeer/permimp?branch=master&svg=true)](https://ci.appveyor.com/project/ddebeer/permimp)
-[![Build Status](https://app.travis-ci.com/ddebeer/permimp.svg?branch=master)](https://app.travis-ci.com/ddebeer/permimp) [![codecov](https://codecov.io/gh/ddebeer/permimp/branch/master/graph/badge.svg)](https://codecov.io/gh/ddebeer/permimp)
 [![cranlogs](http://cranlogs.r-pkg.org/badges/grand-total/permimp?color=blue)](https://cran.r-project.org/package=permimp)
 [![Codecov test coverage](https://codecov.io/gh/ddebeer/permimp/graph/badge.svg)](https://app.codecov.io/gh/ddebeer/permimp)
 [![R-CMD-check](https://github.com/ddebeer/permimp/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ddebeer/permimp/actions/workflows/R-CMD-check.yaml)

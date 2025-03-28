@@ -1,30 +1,47 @@
+## R CMD check results
+
+
 ## Submission
-This is a new version after issues notified by the CRAN team 
 
+This is a new version which includes:
 
-## Fixes
-The issue with the test that resulted in an error on various platforms was solved.
+* The option of using parallel processing (implemented via the pbapply package).
+* A new way of setting random seeds per tree to make the results reproducible 
+    also when parallel processing is used.
+* continuous integration via github actions
+* a package website made using pkgdown
+
 
 
 ## Test environments
+
 * local windows x86_64-w64-mingw32/x64, R 4.4.2
-* OS X (on travis-ci), release
-* windows via windbuilder, R4.4.3 alpha
-* windows via windbuilder, R4.5.0 alpha
-
-* linux xenial (on travis-ci), oldrel, release, devel
-* windows (on AppVeyor), release
-* Oracle Solaris 10, x86, 32 bit, R-release (via Rhub)
-* Debian Linux, R-release, GCC (via Rhub) 
-* Fedora Linux, R-devel, GCC (via Rhub)
-* Debian Linux, R-release, GCC (via Rhub)
-* Ubuntu Linux 20.04.1 LTS, R-release, GCC (via Rhub)
-* Windows Server 2008 R2 SP1, R-release, 32/64 bit (via Rhub)
-
-
+* windows via winbuilder, R4.4.3 alpha
+* windows via winbuilder, R4.5.0 alpha
+* via Rhub: 
+    * linux; R-*; ubuntu-latest on GitHub
+    * m1-san; R-*; macos-latest on GitHub, ASAN + UBSAN on macOS
+    * macos; R-*; macos-13 on GitHub
+    * macos-arm64; R-*; macos-latest on GitHub
+    * windows; R-*; windows-latest on GitHub
+    * ubuntu-next; R-4.5.0 (2025-03-25 r88054); Ubuntu 22.04.5 LTS
+    * ubuntu-release R-4.4.3 (2025-02-28); Ubuntu 22.04.5 LTS
+* via R-CMD-check github actions
+    * macos-latest; R release
+    * windows-latest; R release
+    * ubuntu-latest; R devel    
+    * ubuntu-latest; R release    
+    * ubuntu-latest; R oldrel-1        
+    
+    
 ## R CMD check results
-0 errors | 0 warnings | 0 notes
+
+0 errors | 0 warnings | 1 note
+
+* This is a new release.
 
 
 ## Downstream dependencies
 There are currently no downstream dependencies.
+
+
