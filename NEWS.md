@@ -1,3 +1,5 @@
+# permimp (development version)
+
 # permimp 1.2-0
 
 * implemented parallel processing using the pbapply-package
