@@ -12,7 +12,7 @@
 
 This R-package computes the Conditional Permutation Importance (CPI; Strobl, 2008) 
 using an alternative implementation that is both faster and more 
-stable ([Debeer & Strobl 2020](https://rdcu.be/b5CrH)). The (C)PI can 
+stable ([Debeer & Strobl 2020](https://link.springer.com/epdf/10.1186/s12859-020-03622-2?sharing_token=inHQK8hnyRIQru7bHcXDDW_BpE1tBhCbnbw3BuzI2RN55W-VwYEoqzfjHjtSVy84ZRZyTXjG4P7uy4HmRSDiEF1RjTISysTSpUnXJ8dlbSwRAIc8DAlBweyqOhuW0y7WvNkjO8RP1q2v-9DBACU0MtNKm1sRdy0GDZVEC5E2wGE%3D)). The (C)PI can 
 be computed for random forest fit using (a) the original impurity 
 reduction method ( `randomForest`-package), and (b) using the Conditional 
 Inference framework (`party`-package). In addition, a plotting method for 
