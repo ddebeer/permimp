@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   permimp-package: permimp-package.html
-last_built: 2025-03-28T11:35Z
+last_built: 2025-03-28T11:37Z
 urls:
   reference: https://ddebeer.github.io/permimp/reference
   article: https://ddebeer.github.io/permimp/articles
