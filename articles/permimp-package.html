@@ -59,7 +59,7 @@
                         <h4 data-toc-skip class="author">Dries
 Debeer</h4>
             <address class="author_afil">
-      University of Zurich<br><h4 data-toc-skip class="date">2025-03-27</h4>
+      University of Zurich<br><h4 data-toc-skip class="date">2025-03-28</h4>
       
 
       <div class="d-none name"><code>permimp-package.Rmd</code></div>
@@ -157,10 +157,10 @@ importance.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">CPI_permimp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/permimp.html">permimp</a></span><span class="op">(</span><span class="va">cfAirq50</span>, conditional <span class="op">=</span> <span class="cn">TRUE</span>, progressBar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.194   0.010   0.204</span></span>
+<span><span class="co">#&gt;   0.180   0.014   0.194</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">CPI_varimp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/party/man/varimp.html" class="external-link">varimp</a></span><span class="op">(</span><span class="va">cfAirq50</span>, conditional <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.488   0.009   1.497</span></span>
+<span><span class="co">#&gt;   1.288   0.005   1.294</span></span>
 <span><span class="va">CPI_permimp</span></span>
 <span><span class="co">#&gt;    Solar.R       Wind       Temp      Month        Day </span></span>
 <span><span class="co">#&gt;  83.736656 209.786231 422.671385   1.820496  -7.668462</span></span>
@@ -230,11 +230,11 @@ exactly the same.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">542863</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">CPI_asParty</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/permimp.html">permimp</a></span><span class="op">(</span><span class="va">cfAirq50</span>, conditional <span class="op">=</span> <span class="cn">TRUE</span>, asParty <span class="op">=</span> <span class="cn">TRUE</span>, progressBar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.276   0.000   0.275</span></span>
+<span><span class="co">#&gt;   0.262   0.000   0.262</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">542863</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">CPI_varimp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/party/man/varimp.html" class="external-link">varimp</a></span><span class="op">(</span><span class="va">cfAirq50</span>, conditional <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.467   0.000   1.467</span></span>
+<span><span class="co">#&gt;   1.269   0.000   1.269</span></span>
 <span><span class="va">CPI_asParty</span></span>
 <span><span class="co">#&gt;    Solar.R       Wind       Temp      Month        Day </span></span>
 <span><span class="co">#&gt;  36.364271 136.732886 200.620728   3.179600   1.360632</span></span>
